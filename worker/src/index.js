@@ -241,7 +241,15 @@ export default {
 
     // POST /ai/chat  ── núcleo de la IA ──────────────────────
     if (method === 'POST' && path === '/ai/chat') {
-      const { leadId, message, history = [] } = await request.json();
+      const { leadId, message, history = [], waMessageId } = await request.json();
+
+      // Deduplicación server-side: si este waMessageId ya fue procesado, devolver el reply existente
+      if (waMessageId) {
+        const dup = await env.DB.prepare(
+          'SELECT text FROM messages WHERE wa_msg_id = ? AND direction = "out" LIMIT 1'
+        ).bind(waMessageId).first();
+        if (dup) return json({ reply: dup.text, extracted: {}, stage: null, duplicate: true });
+      }
 
       // Cargar lead desde D1
       const lead = (await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(leadId).first()) || {};
@@ -286,8 +294,8 @@ export default {
 
       // Guardar mensaje de la IA en tabla messages
       await env.DB.prepare(
-        'INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)'
-      ).bind(leadId, 'out', reply, 'Ángela', Date.now()).run();
+        'INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)'
+      ).bind(leadId, 'out', reply, 'Ángela', Date.now(), waMessageId || null).run();
 
       // Si completó datos, enviar PDF y pasar a presupuesto_enviado
       if (newStage === 'datos_completos') {
