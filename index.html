@@ -318,7 +318,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.3</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.4</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -605,10 +605,10 @@ let unsubTasks = null;
 // ════════════════════════════════════════════════════════════
 // PERSISTENCIA EN LOCALSTORAGE
 // ════════════════════════════════════════════════════════════
-const LS_STAGES    = 'crm_stages';
-const LS_TEMPLATES = 'crm_templates';
-const LS_USERS     = 'crm_users';
-const LS_WA_LEADS  = 'crm_wa_leads';
+const LS_STAGES    = 'crd_stages';
+const LS_TEMPLATES = 'crd_templates';
+const LS_USERS     = 'crd_users';
+const LS_WA_LEADS  = 'crd_wa_leads';
 
 function saveWALeads() {
   const waLeads = Object.values(leadsData).filter(l => l.id.startsWith('wa_'));
