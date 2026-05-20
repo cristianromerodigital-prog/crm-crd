@@ -300,7 +300,7 @@ select.info-input option{background:#fff}
     <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V2.7</div>
+    <div class="login-version">V2.8</div>
     <div id="demoHint" style="display:none;margin-top:20px;padding:12px;background:#1e293b;border-radius:8px;font-size:12px;color:#94a3b8;text-align:left;line-height:1.8">
       <strong style="color:#c9a84c">Modo Demo</strong><br>
       nico@crm.com &nbsp;&nbsp;&nbsp;/ palacio123<br>
@@ -320,7 +320,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.7</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.8</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -624,6 +624,7 @@ const LS_STAGES    = 'crd_stages';
 const LS_TEMPLATES = 'crd_templates';
 const LS_USERS     = 'crd_users';
 const LS_WA_LEADS  = 'crd_wa_leads';
+const LS_WA_MSGS   = 'crd_wa_msgs';
 
 function saveWALeads() {
   const waLeads = Object.values(leadsData).filter(l => l.id.startsWith('wa_'));
@@ -631,6 +632,17 @@ function saveWALeads() {
 }
 function loadWALeads() {
   try { return JSON.parse(localStorage.getItem(LS_WA_LEADS) || '[]'); } catch(_) { return []; }
+}
+function saveWAMsgs() {
+  if (!window._demoConvs) return;
+  const waMsgs = {};
+  Object.keys(window._demoConvs).forEach(id => {
+    if (id.startsWith('wa_')) waMsgs[id] = window._demoConvs[id];
+  });
+  localStorage.setItem(LS_WA_MSGS, JSON.stringify(waMsgs));
+}
+function loadWAMsgs() {
+  try { return JSON.parse(localStorage.getItem(LS_WA_MSGS) || '{}'); } catch(_) { return {}; }
 }
 
 function loadStages() {
@@ -768,6 +780,9 @@ function startApp() {
     l.updatedAt = { toDate: () => new Date(l._ts || Date.now()), seconds: (l._ts || Date.now())/1000 };
     leadsData[l.id] = l;
   });
+  // Restaurar mensajes WA persistidos
+  if (!window._demoConvs) window._demoConvs = {};
+  Object.assign(window._demoConvs, loadWAMsgs());
 
   renderKanban();
   subscribeLeads();
@@ -791,6 +806,8 @@ function autoReplyFirstContact(leadId, name) {
     window._demoConvs[leadId].push({ dir:'out', text: msg, who:'Cristian', time:'ahora' });
     leadsData[leadId].lastMessage = msg;
     leadsData[leadId].stage = 'consultando';
+    saveWALeads();
+    saveWAMsgs();
     renderCards();
   });
 }
@@ -827,6 +844,8 @@ function processIncomingWAMessage(msg) {
     if (!window._demoConvs) window._demoConvs = {};
     if (!window._demoConvs[existing.id]) window._demoConvs[existing.id] = [];
     window._demoConvs[existing.id].push({ dir:'in', text, time:'ahora' });
+    saveWALeads();
+    saveWAMsgs();
     renderCards();
     if (currentLeadId === existing.id) {
       const msgList = document.getElementById('msgList');
@@ -869,6 +888,7 @@ function processIncomingWAMessage(msg) {
     setTimeout(() => autoReplyFirstContact(id, displayName), 2000);
     window._demoConvs = window._demoConvs || {};
     window._demoConvs[id] = [{ dir:'in', text, time:'ahora' }];
+    saveWAMsgs();
     renderCards();
     showToast(`📱 Nuevo lead WA: ${text.substring(0,40)}`);
   }
@@ -1062,6 +1082,7 @@ async function updateLeadStage(leadId, stageId) {
   if (window._demoMode) {
     if (leadsData[leadId]) {
       leadsData[leadId].stage = stageId;
+      saveWALeads();
       renderCards();
       updatePanelHead(leadsData[leadId]);
     }
@@ -1166,6 +1187,7 @@ async function sendMessage() {
   if (window._demoMode) {
     if (!window._demoConvs[currentLeadId]) window._demoConvs[currentLeadId] = [];
     window._demoConvs[currentLeadId].push({ text, dir:'out', who:author, time:'ahora' });
+    if (currentLeadId.startsWith('wa_')) saveWAMsgs();
     const msgList = document.getElementById('msgList');
     const div = document.createElement('div');
     div.className = 'msg out';
