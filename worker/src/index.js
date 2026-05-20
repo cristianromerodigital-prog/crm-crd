@@ -96,28 +96,38 @@ function json(data, status = 200) {
   });
 }
 
-async function callGemini(env, messages) {
-  const contents = messages
-    .filter(m => m.role !== 'system')
-    .map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+// async function callGemini(env, messages) {
+//   const contents = messages
+//     .filter(m => m.role !== 'system')
+//     .map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+//   const system = messages.find(m => m.role === 'system')?.content || '';
+//   const res = await fetch(
+//     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
+//     { method:'POST', headers:{'Content-Type':'application/json'},
+//       body: JSON.stringify({ system_instruction:{parts:[{text:system}]}, contents, generationConfig:{maxOutputTokens:800,temperature:0.7} }) }
+//   );
+//   const data = await res.json();
+//   if (!data.candidates) console.error('Gemini error:', JSON.stringify(data).slice(0,300));
+//   return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+// }
 
-  const system = messages.find(m => m.role === 'system')?.content || '';
-
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: system }] },
-        contents,
-        generationConfig: { maxOutputTokens: 800, temperature: 0.7 },
-      }),
-    }
-  );
+async function callOpenAI(env, messages) {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages,
+      max_tokens: 800,
+      temperature: 0.7,
+    }),
+  });
   const data = await res.json();
-  if (!data.candidates) console.error('Gemini error:', JSON.stringify(data).slice(0,300));
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!data.choices) console.error('OpenAI error:', JSON.stringify(data).slice(0, 300));
+  return data.choices?.[0]?.message?.content || '';
 }
 
 async function sendWA(waJid, message, mediaUrl = null, filename = null) {
@@ -243,10 +253,7 @@ export default {
         { role: 'user', content: message },
       ];
 
-      let raw = '';
-      for (let attempt = 0; attempt < 3 && !raw; attempt++) {
-        raw = await callGemini(env, messages);
-      }
+      const raw = await callOpenAI(env, messages);
       if (!raw) return json({ error: 'AI unavailable' }, 503);
 
       // Parsear JSON de la respuesta
