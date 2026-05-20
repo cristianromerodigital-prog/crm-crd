@@ -96,20 +96,6 @@ function json(data, status = 200) {
   });
 }
 
-// async function callGemini(env, messages) {
-//   const contents = messages
-//     .filter(m => m.role !== 'system')
-//     .map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
-//   const system = messages.find(m => m.role === 'system')?.content || '';
-//   const res = await fetch(
-//     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
-//     { method:'POST', headers:{'Content-Type':'application/json'},
-//       body: JSON.stringify({ system_instruction:{parts:[{text:system}]}, contents, generationConfig:{maxOutputTokens:800,temperature:0.7} }) }
-//   );
-//   const data = await res.json();
-//   if (!data.candidates) console.error('Gemini error:', JSON.stringify(data).slice(0,300));
-//   return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-// }
 
 async function callOpenAI(env, messages) {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -251,8 +237,9 @@ export default {
         if (dup) return json({ reply: dup.text, extracted: {}, stage: null, duplicate: true });
       }
 
-      // Cargar lead desde D1
-      const lead = (await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(leadId).first()) || {};
+      // Cargar lead desde D1 — rechazar si no existe (evita zombie tabs con leads fantasma)
+      const lead = await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(leadId).first();
+      if (!lead) return json({ error: 'Lead not found' }, 404);
 
       const systemPrompt = buildSystemPrompt(lead);
       const messages = [
@@ -318,12 +305,12 @@ export default {
       const { waJid, waMessageId, message, pushName } = await request.json();
       if (!waJid || !message) return json({ error: 'missing fields' }, 400);
 
-      // Deduplicación: si este waMessageId ya fue procesado, ignorar
+      // Lock atómico: INSERT OR IGNORE con PRIMARY KEY garantiza que solo UN request procesa este mensaje
       if (waMessageId) {
-        const dup = await env.DB.prepare(
-          'SELECT text FROM messages WHERE wa_msg_id = ? AND direction = "out" LIMIT 1'
-        ).bind(waMessageId).first();
-        if (dup) return json({ ok: true, duplicate: true });
+        const lock = await env.DB.prepare(
+          'INSERT OR IGNORE INTO wa_locks (wa_msg_id, ts) VALUES (?, ?)'
+        ).bind(waMessageId, Date.now()).run();
+        if (lock.meta.changes === 0) return json({ ok: true, duplicate: true });
       }
 
       // Buscar o crear lead por waJid
