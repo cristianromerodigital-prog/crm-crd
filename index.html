@@ -731,8 +731,10 @@ document.getElementById('loginPass').addEventListener('keydown', e => {
 // ════════════════════════════════════════════════════════════
 // APP START
 // ════════════════════════════════════════════════════════════
+const BRIDGE_URL = 'https://bridge.cristianromerodigital.ar';
+let _lastMsgTimestamp = Math.floor(Date.now() / 1000) - 300; // últimos 5 min al arrancar
+
 function startApp() {
-  // Cargar etapas y plantillas guardadas
   const savedStages = loadStages();
   if (savedStages) { STAGES.length = 0; savedStages.forEach(s => STAGES.push(s)); }
   const savedTpls = loadTemplates();
@@ -742,6 +744,62 @@ function startApp() {
   subscribeLeads();
   buildStageSelect('newStage');
   buildTemplates();
+  startWAPolling();
+}
+
+function startWAPolling() {
+  setInterval(async () => {
+    try {
+      const r = await fetch(`${BRIDGE_URL}/api/recent-messages?since=${_lastMsgTimestamp}`);
+      if (!r.ok) return;
+      const msgs = await r.json();
+      if (!msgs.length) return;
+      _lastMsgTimestamp = Math.max(...msgs.map(m => m.timestamp));
+      msgs.forEach(msg => processIncomingWAMessage(msg));
+    } catch(_) {}
+  }, 5000);
+}
+
+function processIncomingWAMessage(msg) {
+  const phone = msg.sender.replace('@s.whatsapp.net', '').replace('@lid', '');
+  const text = msg.content || '';
+  if (!text) return;
+
+  // Buscar lead existente por teléfono
+  const existing = Object.values(leadsData).find(l => l.phone && l.phone.replace(/\D/g,'').endsWith(phone.replace(/\D/g,'')));
+
+  if (existing) {
+    existing.lastMessage = text;
+    existing.updatedAt = { toDate: () => new Date(msg.timestamp * 1000), seconds: msg.timestamp };
+    if (!window._demoConvs) window._demoConvs = {};
+    if (!window._demoConvs[existing.id]) window._demoConvs[existing.id] = [];
+    window._demoConvs[existing.id].push({ dir:'in', text, time:'ahora' });
+    renderCards();
+    if (currentLeadId === existing.id) {
+      const box = document.getElementById('chatBox');
+      if (box) {
+        const el = document.createElement('div');
+        el.className = 'msg msg-in';
+        el.textContent = text;
+        box.appendChild(el);
+        box.scrollTop = box.scrollHeight;
+      }
+    }
+    showToast(`📱 ${existing.name}: ${text.substring(0,40)}`);
+  } else {
+    // Nuevo lead desconocido
+    const id = 'wa_' + Date.now();
+    leadsData[id] = {
+      id, salon:'otros', name: phone, phone: '+' + phone,
+      source:'whatsapp', eventType:'', eventYear:'', stage:'nuevo_lead',
+      guests:0, notes:'', lastMessage: text,
+      updatedAt: { toDate: () => new Date(msg.timestamp * 1000), seconds: msg.timestamp }
+    };
+    window._demoConvs = window._demoConvs || {};
+    window._demoConvs[id] = [{ dir:'in', text, time:'ahora' }];
+    renderCards();
+    showToast(`📱 Nuevo lead WA: ${text.substring(0,40)}`);
+  }
 }
 
 // ════════════════════════════════════════════════════════════
