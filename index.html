@@ -47,7 +47,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .login-version{font-size:10px;color:var(--subtle);margin-top:20px;letter-spacing:1px}
 
 /* ─── APP LAYOUT ─── */
-#app{display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;width:100%;overflow:hidden}
+#app{display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;overflow:hidden}
 header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;background:var(--header-bg);border-bottom:2px solid var(--accent);flex-shrink:0;z-index:10}
 .logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:var(--text);margin-right:8px}
 .salon-tabs{display:flex;gap:4px;flex:1}
@@ -318,7 +318,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.2</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.3</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -814,13 +814,13 @@ function processIncomingWAMessage(msg) {
     window._demoConvs[existing.id].push({ dir:'in', text, time:'ahora' });
     renderCards();
     if (currentLeadId === existing.id) {
-      const box = document.getElementById('chatBox');
-      if (box) {
+      const msgList = document.getElementById('msgList');
+      if (msgList) {
         const el = document.createElement('div');
-        el.className = 'msg msg-in';
-        el.textContent = text;
-        box.appendChild(el);
-        box.scrollTop = box.scrollHeight;
+        el.className = 'msg in';
+        el.innerHTML = `<div class="msg-bubble">${esc(text)}</div><div class="msg-meta">ahora</div>`;
+        msgList.appendChild(el);
+        msgList.scrollTop = msgList.scrollHeight;
       }
     }
     showToast(`📱 ${existing.name}: ${text.substring(0,40)}`);
