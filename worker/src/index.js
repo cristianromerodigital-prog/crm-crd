@@ -6,24 +6,26 @@ const CORS = {
 
 const BRIDGE_URL = 'https://bridge.cristianromerodigital.ar';
 
-const FIELDS = ['name','event_type','event_date','venue','guests','schedule','service'];
+const FIELDS = ['name','event_type','event_date','venue','guests','schedule','service','pre_service'];
 const FIELD_LABELS = {
-  name:       'nombre completo',
-  event_type: 'tipo de evento (boda, 15 años, corporativo, etc.)',
-  event_date: 'fecha del evento',
-  venue:      'lugar o salón donde se realiza',
-  guests:     'cantidad aproximada de invitados',
-  schedule:   'horario (inicio y fin estimado)',
-  service:    'si necesita foto, video o ambos',
+  name:        'nombre completo',
+  event_type:  'tipo de evento (boda, 15 años, corporativo, etc.)',
+  event_date:  'fecha del evento',
+  venue:       'lugar o salón donde se realiza',
+  guests:      'cantidad aproximada de invitados',
+  schedule:    'horario (inicio y fin estimado)',
+  service:     'si necesita foto, video o ambos',
+  pre_service: 'si le interesa hacer un Pre (book de exteriores antes del evento)',
 };
 const FIELD_WHY = {
-  name:       'para personalizar la propuesta',
-  event_type: 'porque cada tipo de evento tiene cobertura diferente',
-  event_date: 'para verificar disponibilidad de Cristian ese día',
-  venue:      'para saber si hay traslado incluido en la cotización',
-  guests:     'porque más invitados implica más horas de cobertura',
-  schedule:   'para calcular las horas exactas de trabajo',
-  service:    'porque foto y video tienen precios distintos',
+  name:        'para personalizar la propuesta',
+  event_type:  'porque cada tipo de evento tiene cobertura diferente',
+  event_date:  'para verificar disponibilidad de Cristian ese día',
+  venue:       'para saber si hay traslado incluido en la cotización',
+  guests:      'porque más invitados implica más horas de cobertura',
+  schedule:    'para calcular las horas exactas de trabajo',
+  service:     'porque foto y video tienen precios distintos',
+  pre_service: 'es una sesión de fotos de exteriores previa al evento, muy recomendada para bodas y 15 años',
 };
 
 function buildSystemPrompt(lead) {
@@ -36,9 +38,12 @@ function buildSystemPrompt(lead) {
   const missingDesc = missing.map(f => `- ${FIELD_LABELS[f]} (${FIELD_WHY[f]})`).join('\n');
   const collectedDesc = Object.entries(collected).map(([f,v]) => `- ${FIELD_LABELS[f]}: ${v}`).join('\n');
 
-  return `Sos el asistente virtual de Cristian Romero Digital, fotógrafo profesional de eventos sociales en Buenos Aires. Tu nombre es Ángela.
+  const eventType = (collected['event_type'] || '').toLowerCase();
+  const isBoV = eventType.includes('boda') || eventType.includes('casamiento') || eventType.includes('matrimonio') || eventType.includes('15') || eventType.includes('quince');
 
-Tu único objetivo es recopilar los datos del cliente de forma natural y amigable para que Cristian pueda armar una propuesta personalizada.
+  return `Sos Ángela, del equipo de Cristian Romero Digital, fotógrafo profesional de eventos sociales en Buenos Aires.
+
+Tu objetivo es recopilar los datos del cliente de forma natural y amigable para que Cristian pueda armar una propuesta personalizada.
 
 DATOS YA RECOPILADOS:
 ${collectedDesc || '(ninguno aún)'}
@@ -48,14 +53,15 @@ ${missingDesc || '¡Todos los datos están completos!'}
 
 INSTRUCCIONES:
 - Hablá en español rioplatense, tono cálido y cercano, nunca robótico
-- Presentate brevemente solo en el primer mensaje
+- En el primer mensaje saludá con tu nombre sin decir que sos asistente ni nada por el estilo, simplemente "Hola, soy Ángela, del equipo de Cristian"
 - Pedí los datos faltantes de forma natural, de a uno o dos por mensaje como máximo
-- Cuando el cliente no dé un dato, insistí amablemente UNA sola vez explicando el motivo (ya está en la lista de arriba)
+- El campo "pre_service" solo preguntalo si el evento es boda o 15 años${isBoV ? ' (aplica para este evento)' : ' (NO aplica para este evento, omitilo)'}
+- Cuando el cliente no dé un dato, insistí amablemente UNA sola vez explicando el motivo
 - Si el cliente esquiva un dato más de una vez, avanzá con lo que tenés
-- Si el cliente manda un mensaje ofensivo, inapropiado o completamente irrelevante (insultos, groserías, mensajes sin sentido), NO lo tomes como respuesta válida a ningún dato. Respondé con calma y amabilidad, ignorá el contenido ofensivo, y repetí la pregunta que estabas haciendo
+- Si el cliente manda un mensaje ofensivo, inapropiado o completamente irrelevante, NO lo tomes como respuesta válida. Respondé con calma, ignorá el contenido ofensivo y repetí la pregunta que estabas haciendo
 - NUNCA menciones precios — Cristian los manda personalmente
 - NUNCA inventes información sobre servicios, packs o disponibilidad
-- Cuando todos los datos estén completos, avisale al cliente que Cristian se va a comunicar pronto con la propuesta
+- Cuando todos los datos estén completos, avisale que Cristian le va a hacer llegar una propuesta personalizada y que lo ideal sería poder coordinar una entrevista para conocerse y terminar de ajustar los detalles
 - Máximo 3 oraciones por mensaje, texto corrido sin listas
 
 FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
@@ -68,7 +74,8 @@ FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
     "venue": null,
     "guests": null,
     "schedule": null,
-    "service": null
+    "service": null,
+    "pre_service": null
   },
   "stage": null
 }
@@ -257,7 +264,8 @@ export default {
       if (extracted.venue      && extracted.venue      !== 'null') updates.venue      = extracted.venue;
       if (extracted.guests     && extracted.guests     !== 'null') updates.guests     = parseInt(extracted.guests)||0;
       if (extracted.schedule   && extracted.schedule   !== 'null') updates.schedule   = extracted.schedule;
-      if (extracted.service    && extracted.service    !== 'null') updates.service    = extracted.service;
+      if (extracted.service     && extracted.service     !== 'null') updates.service     = extracted.service;
+      if (extracted.pre_service && extracted.pre_service !== 'null') updates.pre_service = extracted.pre_service;
       if (newStage) updates.stage = newStage;
 
       const setClauses = Object.keys(updates).map(k => `${k} = ?`).join(', ');
@@ -269,7 +277,7 @@ export default {
         'INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)'
       ).bind(leadId, 'out', reply, 'Ángela', Date.now()).run();
 
-      // Si completó datos, enviar PDF de presupuesto
+      // Si completó datos, enviar PDF y pasar a presupuesto_enviado
       if (newStage === 'datos_completos') {
         const fresh = await env.DB.prepare('SELECT wa_jid, event_type FROM leads WHERE id = ?').bind(leadId).first();
         const waJid = fresh?.wa_jid || lead.wa_jid || '';
@@ -277,6 +285,8 @@ export default {
         const pdf = getPdfUrl(eventType);
         if (waJid && pdf) {
           await sendWA(waJid, '', pdf.url, pdf.name);
+          await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
+            .bind('presupuesto_enviado', Date.now(), leadId).run();
         }
       }
 
