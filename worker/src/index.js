@@ -242,7 +242,11 @@ export default {
         { role: 'user', content: message },
       ];
 
-      const raw = await callGemini(env, messages);
+      let raw = '';
+      for (let attempt = 0; attempt < 3 && !raw; attempt++) {
+        raw = await callGemini(env, messages);
+      }
+      if (!raw) return json({ error: 'AI unavailable' }, 503);
 
       // Parsear JSON de la respuesta
       let parsed = {};
@@ -251,8 +255,8 @@ export default {
         parsed = match ? JSON.parse(match[0]) : {};
       } catch (_) {}
 
-      const fallback = 'Perdoná, ¿me repetís eso? Quiero asegurarme de entenderte bien. 😊';
-      const reply     = parsed.reply || raw || fallback;
+      const reply = parsed.reply || raw;
+      if (!reply) return json({ error: 'AI unavailable' }, 503);
       const extracted = parsed.extracted || {};
       const newStage  = parsed.stage || null;
 
