@@ -1051,6 +1051,7 @@ async function doDeleteLead() {
   closePanel();
   if (window._demoMode) {
     delete leadsData[id];
+    saveWALeads();
     renderCards();
     return;
   }
