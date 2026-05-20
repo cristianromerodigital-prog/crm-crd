@@ -318,7 +318,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V1.9</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.0</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -747,6 +747,25 @@ function startApp() {
   startWAPolling();
 }
 
+function autoReplyFirstContact(leadId, name) {
+  const lead = leadsData[leadId];
+  if (!lead || (!lead.waJid && !lead.phone)) return;
+  const firstName = name.split(' ')[0];
+  const msg = `¡Hola ${firstName}! 😊 Soy Cristian, fotógrafo de eventos en Buenos Aires.\n\nTe comparto mi Instagram y web para que conozcas mi trabajo:\n\n📸 instagram.com/cristian.romero.digital\n🌐 cristianromerodigital.ar\n\n¿Para qué tipo de evento necesitás el servicio?`;
+  const recipient = lead.waJid || lead.phone.replace(/\D/g,'');
+  fetch(`${BRIDGE_URL}/api/send`, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ recipient, message: msg })
+  }).then(() => {
+    if (!window._demoConvs) window._demoConvs = {};
+    if (!window._demoConvs[leadId]) window._demoConvs[leadId] = [];
+    window._demoConvs[leadId].push({ dir:'out', text: msg, who:'Cristian', time:'ahora' });
+    leadsData[leadId].lastMessage = msg;
+    leadsData[leadId].stage = 'consultando';
+    renderCards();
+  });
+}
+
 function startWAPolling() {
   setInterval(async () => {
     try {
@@ -794,12 +813,15 @@ function processIncomingWAMessage(msg) {
   } else {
     // Nuevo lead desconocido
     const id = 'wa_' + Date.now();
+    const displayName = msg.pushName && msg.pushName !== msg.sender ? msg.pushName : phone;
     leadsData[id] = {
-      id, salon:'otros', name: phone, phone: '', waJid: chatJid,
+      id, salon:'otros', name: displayName, phone: '', waJid: chatJid,
       source:'whatsapp', eventType:'', eventYear:'', stage:'nuevo_lead',
       guests:0, notes:'', lastMessage: text,
       updatedAt: { toDate: () => new Date(msg.timestamp * 1000), seconds: msg.timestamp }
     };
+    // Respuesta automática — primer contacto
+    setTimeout(() => autoReplyFirstContact(id, displayName), 2000);
     window._demoConvs = window._demoConvs || {};
     window._demoConvs[id] = [{ dir:'in', text, time:'ahora' }];
     renderCards();
