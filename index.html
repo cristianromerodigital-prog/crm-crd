@@ -684,8 +684,12 @@ function initFirebase() {
     console.info('Modo demo activo â€” sin base de datos');
     initDemoMode();
     initSimulator();
-    document.getElementById('demoHint').style.display = 'block';
-    // Demo mode requires login - no auto-login
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('fabAdd').style.display = 'flex';
+    document.getElementById('headerUser').textContent = 'Cristian';
+    checkAdminAccess('Cristian');
+    startApp();
     return;
   }
   try {
