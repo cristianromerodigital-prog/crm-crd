@@ -251,7 +251,7 @@ export default {
         parsed = match ? JSON.parse(match[0]) : {};
       } catch (_) {}
 
-      const fallback = '¡Hola! Soy Ángela, el asistente de Cristian Romero Digital. ¿Me contás tu nombre y qué tipo de evento estás planeando? 😊';
+      const fallback = 'Perdoná, ¿me repetís eso? Quiero asegurarme de entenderte bien. 😊';
       const reply     = parsed.reply || raw || fallback;
       const extracted = parsed.extracted || {};
       const newStage  = parsed.stage || null;
