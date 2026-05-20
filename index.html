@@ -318,7 +318,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.1</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.2</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -608,6 +608,15 @@ let unsubTasks = null;
 const LS_STAGES    = 'crm_stages';
 const LS_TEMPLATES = 'crm_templates';
 const LS_USERS     = 'crm_users';
+const LS_WA_LEADS  = 'crm_wa_leads';
+
+function saveWALeads() {
+  const waLeads = Object.values(leadsData).filter(l => l.id.startsWith('wa_'));
+  localStorage.setItem(LS_WA_LEADS, JSON.stringify(waLeads));
+}
+function loadWALeads() {
+  try { return JSON.parse(localStorage.getItem(LS_WA_LEADS) || '[]'); } catch(_) { return []; }
+}
 
 function loadStages() {
   try {
@@ -739,6 +748,11 @@ function startApp() {
   if (savedStages) { STAGES.length = 0; savedStages.forEach(s => STAGES.push(s)); }
   const savedTpls = loadTemplates();
   if (savedTpls) { TEMPLATES.length = 0; savedTpls.forEach(t => TEMPLATES.push(t)); }
+  // Restaurar leads WA persistidos
+  loadWALeads().forEach(l => {
+    l.updatedAt = { toDate: () => new Date(l._ts || Date.now()), seconds: (l._ts || Date.now())/1000 };
+    leadsData[l.id] = l;
+  });
 
   renderKanban();
   subscribeLeads();
@@ -820,6 +834,8 @@ function processIncomingWAMessage(msg) {
       guests:0, notes:'', lastMessage: text,
       updatedAt: { toDate: () => new Date(msg.timestamp * 1000), seconds: msg.timestamp }
     };
+    leadsData[id]._ts = msg.timestamp * 1000;
+    saveWALeads();
     // Intentar resolver el teléfono real del LID
     if (chatJid.includes('@lid')) {
       fetch(`${BRIDGE_URL}/api/resolve-phone?jid=${encodeURIComponent(chatJid)}`)
