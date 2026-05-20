@@ -36,7 +36,7 @@ function buildSystemPrompt(lead) {
   const missingDesc = missing.map(f => `- ${FIELD_LABELS[f]} (${FIELD_WHY[f]})`).join('\n');
   const collectedDesc = Object.entries(collected).map(([f,v]) => `- ${FIELD_LABELS[f]}: ${v}`).join('\n');
 
-  return `Sos el asistente virtual de Cristian Romero Digital, fotógrafo profesional de eventos sociales en Buenos Aires. Tu nombre es CrisBot.
+  return `Sos el asistente virtual de Cristian Romero Digital, fotógrafo profesional de eventos sociales en Buenos Aires. Tu nombre es Ángela.
 
 Tu único objetivo es recopilar los datos del cliente de forma natural y amigable para que Cristian pueda armar una propuesta personalizada.
 
@@ -52,6 +52,7 @@ INSTRUCCIONES:
 - Pedí los datos faltantes de forma natural, de a uno o dos por mensaje como máximo
 - Cuando el cliente no dé un dato, insistí amablemente UNA sola vez explicando el motivo (ya está en la lista de arriba)
 - Si el cliente esquiva un dato más de una vez, avanzá con lo que tenés
+- Si el cliente manda un mensaje ofensivo, inapropiado o completamente irrelevante (insultos, groserías, mensajes sin sentido), NO lo tomes como respuesta válida a ningún dato. Respondé con calma y amabilidad, ignorá el contenido ofensivo, y repetí la pregunta que estabas haciendo
 - NUNCA menciones precios — Cristian los manda personalmente
 - NUNCA inventes información sobre servicios, packs o disponibilidad
 - Cuando todos los datos estén completos, avisale al cliente que Cristian se va a comunicar pronto con la propuesta
@@ -78,7 +79,7 @@ En "stage" poné: "consultando" si seguís recopilando, "datos_completos" si ya 
 
 function buildFollowupMsg(lead) {
   const name = lead.name ? `, ${lead.name.split(' ')[0]}` : '';
-  return `¡Hola${name}! 😊 Soy CrisBot, el asistente de Cristian Romero Digital. Hace una semana estuvimos hablando sobre tu evento y quería saber si todavía estás buscando fotógrafo. ¡Estamos disponibles para ayudarte! ¿Querés que retomemos?`;
+  return `¡Hola${name}! 😊 Soy Ángela, el asistente de Cristian Romero Digital. Hace una semana estuvimos hablando sobre tu evento y quería saber si todavía estás buscando fotógrafo. ¡Estamos disponibles para ayudarte! ¿Querés que retomemos?`;
 }
 
 function json(data, status = 200) {
@@ -111,17 +112,28 @@ async function callGemini(env, messages) {
   return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
-async function sendWA(waJid, message) {
+async function sendWA(waJid, message, mediaUrl = null, filename = null) {
   try {
-    const recipient = waJid;
+    const body = { recipient: waJid, message };
+    if (mediaUrl) { body.media_url = mediaUrl; body.filename = filename || 'presupuesto.pdf'; }
     await fetch(`${BRIDGE_URL}/api/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recipient, message }),
+      body: JSON.stringify(body),
     });
   } catch (e) {
     console.error('WA send failed', e);
   }
+}
+
+const PDF_BODAS  = 'https://drive.google.com/uc?export=download&id=16gSQoRAa5Ao5whsbuoP7uT1v2ioOE0lH';
+const PDF_QUINCE = 'https://drive.google.com/uc?export=download&id=14EL4HQumkWAOVBqjnx3seIqg6YVpXymx';
+
+function getPdfUrl(eventType) {
+  const t = (eventType || '').toLowerCase();
+  if (t.includes('15') || t.includes('quince') || t.includes('años')) return { url: PDF_QUINCE, name: 'Presupuesto-15años-CRD.pdf' };
+  if (t.includes('boda') || t.includes('casamiento') || t.includes('matrimonio')) return { url: PDF_BODAS, name: 'Presupuesto-Bodas-CRD.pdf' };
+  return null;
 }
 
 export default {
@@ -232,7 +244,8 @@ export default {
         parsed = match ? JSON.parse(match[0]) : {};
       } catch (_) {}
 
-      const reply     = parsed.reply || raw;
+      const fallback = '¡Hola! Soy Ángela, el asistente de Cristian Romero Digital. ¿Me contás tu nombre y qué tipo de evento estás planeando? 😊';
+      const reply     = parsed.reply || raw || fallback;
       const extracted = parsed.extracted || {};
       const newStage  = parsed.stage || null;
 
@@ -254,7 +267,18 @@ export default {
       // Guardar mensaje de la IA en tabla messages
       await env.DB.prepare(
         'INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)'
-      ).bind(leadId, 'out', reply, 'CrisBot', Date.now()).run();
+      ).bind(leadId, 'out', reply, 'Ángela', Date.now()).run();
+
+      // Si completó datos, enviar PDF de presupuesto
+      if (newStage === 'datos_completos') {
+        const fresh = await env.DB.prepare('SELECT wa_jid, event_type FROM leads WHERE id = ?').bind(leadId).first();
+        const waJid = fresh?.wa_jid || lead.wa_jid || '';
+        const eventType = fresh?.event_type || updates.event_type || '';
+        const pdf = getPdfUrl(eventType);
+        if (waJid && pdf) {
+          await sendWA(waJid, '', pdf.url, pdf.name);
+        }
+      }
 
       return json({ reply, extracted: updates, stage: newStage });
     }
