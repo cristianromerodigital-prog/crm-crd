@@ -313,6 +313,95 @@ export default {
       return json({ reply, extracted: updates, stage: newStage });
     }
 
+    // POST /ai/inbound  ── llamado por el bridge en cada mensaje WA entrante
+    if (method === 'POST' && path === '/ai/inbound') {
+      const { waJid, waMessageId, message, pushName } = await request.json();
+      if (!waJid || !message) return json({ error: 'missing fields' }, 400);
+
+      // Deduplicación: si este waMessageId ya fue procesado, ignorar
+      if (waMessageId) {
+        const dup = await env.DB.prepare(
+          'SELECT text FROM messages WHERE wa_msg_id = ? AND direction = "out" LIMIT 1'
+        ).bind(waMessageId).first();
+        if (dup) return json({ ok: true, duplicate: true });
+      }
+
+      // Buscar o crear lead por waJid
+      let lead = await env.DB.prepare('SELECT * FROM leads WHERE wa_jid = ? LIMIT 1').bind(waJid).first();
+      if (!lead) {
+        const newId = 'wa_' + Date.now();
+        const t = Date.now();
+        await env.DB.prepare(
+          `INSERT INTO leads (id,salon,name,phone,wa_jid,source,stage,guests,notes,last_message,created_at,updated_at)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
+        ).bind(newId,'otros',pushName||'','',waJid,'whatsapp','nuevo_lead',0,'',message,t,t).run();
+        lead = { id: newId, wa_jid: waJid, name: pushName||'' };
+      }
+      const leadId = lead.id;
+
+      // Historial desde D1
+      const { results: hist } = await env.DB.prepare(
+        'SELECT direction, text FROM messages WHERE lead_id = ? ORDER BY ts DESC LIMIT 12'
+      ).bind(leadId).all();
+      const histForAI = hist.reverse().map(m => ({ role: m.direction==='out'?'assistant':'user', content: m.text }));
+
+      // Guardar mensaje entrante
+      const tIn = Date.now();
+      await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+        .bind(leadId,'in',message,'',tIn).run();
+      await env.DB.prepare('UPDATE leads SET last_message=?,last_msg_at=?,updated_at=? WHERE id=?')
+        .bind(message,Math.floor(tIn/1000),tIn,leadId).run();
+
+      // Llamar al AI
+      const freshLead = (await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(leadId).first()) || {};
+      const sysPrompt = buildSystemPrompt(freshLead);
+      const aiMessages = [
+        { role:'system', content: sysPrompt },
+        ...histForAI,
+        { role:'user', content: message },
+      ];
+      const raw = await callOpenAI(env, aiMessages);
+      if (!raw) return json({ ok: false, error: 'AI unavailable' });
+
+      let parsed = {};
+      try { const m = raw.match(/\{[\s\S]*\}/); parsed = m ? JSON.parse(m[0]) : {}; } catch(_) {}
+      const reply = parsed.reply || raw;
+      if (!reply) return json({ ok: false });
+
+      // Actualizar lead con datos extraídos
+      const extracted = parsed.extracted || {};
+      const newStage = parsed.stage || null;
+      const upd = { last_msg_at: Date.now(), followup_due: 0 };
+      if (extracted.name        && extracted.name        !== 'null') upd.name        = extracted.name;
+      if (extracted.event_type  && extracted.event_type  !== 'null') upd.event_type  = extracted.event_type;
+      if (extracted.event_date  && extracted.event_date  !== 'null') upd.event_date  = extracted.event_date;
+      if (extracted.venue       && extracted.venue       !== 'null') upd.venue       = extracted.venue;
+      if (extracted.guests      && extracted.guests      !== 'null') upd.guests      = parseInt(extracted.guests)||0;
+      if (extracted.schedule    && extracted.schedule    !== 'null') upd.schedule    = extracted.schedule;
+      if (extracted.service     && extracted.service     !== 'null') upd.service     = extracted.service;
+      if (extracted.pre_service && extracted.pre_service !== 'null') upd.pre_service = extracted.pre_service;
+      if (newStage) upd.stage = newStage;
+      const setCls = Object.keys(upd).map(k=>`${k}=?`).join(',');
+      await env.DB.prepare(`UPDATE leads SET ${setCls},updated_at=? WHERE id=?`)
+        .bind(...Object.values(upd),Date.now(),leadId).run();
+
+      // Guardar reply y enviar
+      await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
+        .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
+      await sendWA(waJid, reply);
+
+      if (newStage === 'datos_completos') {
+        const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
+        const pdf = getPdfUrl(fr?.event_type||upd.event_type||'');
+        if (pdf) {
+          await sendWA(waJid,'',pdf.url,pdf.name);
+          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
+            .bind('presupuesto_enviado',Date.now(),leadId).run();
+        }
+      }
+      return json({ ok: true, reply });
+    }
+
     return json({ error: 'Not found' }, 404);
   },
 
