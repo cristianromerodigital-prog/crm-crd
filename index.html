@@ -300,7 +300,7 @@ select.info-input option{background:#fff}
     <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V2.10</div>
+    <div class="login-version">V2.11</div>
     <div id="demoHint" style="display:none;margin-top:20px;padding:12px;background:#1e293b;border-radius:8px;font-size:12px;color:#94a3b8;text-align:left;line-height:1.8">
       <strong style="color:#c9a84c">Modo Demo</strong><br>
       nico@crm.com &nbsp;&nbsp;&nbsp;/ palacio123<br>
@@ -320,7 +320,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.10</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.11</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -849,25 +849,67 @@ async function startApp() {
   startWAPolling();
 }
 
-function autoReplyFirstContact(leadId, name) {
+async function callAI(leadId, incomingText) {
   const lead = leadsData[leadId];
-  if (!lead || (!lead.waJid && !lead.phone)) return;
-  const firstName = name.split(' ')[0];
-  const msg = `¡Hola ${firstName}! 😊 Soy Cristian, fotógrafo de eventos en Buenos Aires.\n\nTe comparto mi Instagram y web para que conozcas mi trabajo:\n\n📸 instagram.com/cristian.romero.digital\n🌐 cristianromerodigital.ar\n\n¿Para qué tipo de evento necesitás el servicio?`;
-  const recipient = lead.waJid || lead.phone.replace(/\D/g,'');
-  fetch(`${BRIDGE_URL}/api/send`, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ recipient, message: msg })
-  }).then(() => {
+  if (!lead) return;
+  const recipient = lead.waJid || (lead.phone||'').replace(/\D/g,'');
+  if (!recipient) return;
+
+  // Armar historial desde _demoConvs
+  const history = (window._demoConvs?.[leadId] || []).map(m => ({
+    role: m.dir === 'out' ? 'assistant' : 'user',
+    content: m.text
+  }));
+
+  try {
+    const res = await fetch(`${API_URL}/ai/chat`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ leadId, message: incomingText, history })
+    });
+    const data = await res.json();
+    const reply = data.reply;
+    if (!reply) return;
+
+    // Enviar respuesta por WA
+    await fetch(`${BRIDGE_URL}/api/send`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ recipient, message: reply })
+    });
+
+    // Guardar en memoria y renderizar
     if (!window._demoConvs) window._demoConvs = {};
     if (!window._demoConvs[leadId]) window._demoConvs[leadId] = [];
-    window._demoConvs[leadId].push({ dir:'out', text: msg, who:'Cristian', time:'ahora' });
-    leadsData[leadId].lastMessage = msg;
-    leadsData[leadId].stage = 'consultando';
-    apiUpdateLead(leadId, { stage: 'consultando', last_message: msg });
-    apiAddMessage(leadId, 'out', msg, 'Cristian');
+    window._demoConvs[leadId].push({ dir:'out', text: reply, who:'CrisBot', time:'ahora' });
+
+    // Actualizar lead con campos extraídos
+    if (data.extracted) Object.assign(leadsData[leadId], {
+      name:      data.extracted.name      || leadsData[leadId].name,
+      eventType: data.extracted.event_type|| leadsData[leadId].eventType,
+      guests:    data.extracted.guests    || leadsData[leadId].guests,
+    });
+    if (data.stage) leadsData[leadId].stage = data.stage;
+    leadsData[leadId].lastMessage = reply;
+
+    // Actualizar panel si está abierto
+    if (currentLeadId === leadId) {
+      const msgList = document.getElementById('msgList');
+      if (msgList) {
+        const d = document.createElement('div');
+        d.className = 'msg out';
+        d.innerHTML = `<div class="msg-bubble">${esc(reply)}</div><div class="msg-meta">CrisBot  ahora</div>`;
+        msgList.appendChild(d);
+        msgList.scrollTop = msgList.scrollHeight;
+      }
+      if (data.stage) updatePanelHead(leadsData[leadId]);
+    }
     renderCards();
-  });
+  } catch(e) { console.error('AI call failed', e); }
+}
+
+function autoReplyFirstContact(leadId, name) {
+  // Delegado a la IA — el primer mensaje del lead ya está en _demoConvs
+  const firstMsg = (window._demoConvs?.[leadId]?.[0]?.text) || `Hola, me interesa el servicio de fotografía`;
+  callAI(leadId, firstMsg);
 }
 
 function startWAPolling() {
@@ -902,9 +944,10 @@ function processIncomingWAMessage(msg) {
     if (!window._demoConvs) window._demoConvs = {};
     if (!window._demoConvs[existing.id]) window._demoConvs[existing.id] = [];
     window._demoConvs[existing.id].push({ dir:'in', text, time:'ahora' });
-    apiUpdateLead(existing.id, { last_message: text });
     apiAddMessage(existing.id, 'in', text, '');
     renderCards();
+    // IA responde automáticamente
+    setTimeout(() => callAI(existing.id, text), 1500);
     if (currentLeadId === existing.id) {
       const msgList = document.getElementById('msgList');
       if (msgList) {
@@ -2318,8 +2361,8 @@ function receiveSimMessage({ channel, contactId, contactName, text }) {
   const icon = (channel === 'ig' || channel === 'instagram') ? '📸' : '📱';
   showSimToast(`${icon} ${contactName || contactId}: ${text.slice(0, 40)}${text.length > 40 ? '…' : ''}`);
 
-  // Trigger bot
-  botAutoReply(lead.id, text);
+  // Trigger IA
+  setTimeout(() => callAI(lead.id, text), 1500);
 }
 
 function showSimToast(msg) {
