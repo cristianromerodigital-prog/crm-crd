@@ -291,20 +291,9 @@ select.info-input option{background:#fff}
 <body>
 
 <!-- â”€â”€â”€ LOGIN â”€â”€â”€ -->
-<div id="loginScreen">
-  <div class="login-box">
-    <div class="login-logo" style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;font-weight:300">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></div>
-    <div class="login-sub">FotografÃ­a Â· CRM</div>
-    <div class="login-divider"></div>
-    <h1>Acceso al sistema</h1>
-    <p>IngresÃ¡ con tu cuenta</p>
-    <input type="email" id="loginEmail" placeholder="Email" autocomplete="email"/>
-    <input type="password" id="loginPass" placeholder="ContraseÃ±a" autocomplete="current-password"/>
-    <button class="btn-login" onclick="doLogin()">Ingresar</button>
-    <div class="login-error" id="loginErr"></div>
-    <div class=”login-version”>V1.4 — CRD</div>
-    <div id="demoHint" style="display:none"></div>
-  </div>
+<div id=”loginScreen” style=”display:none”>
+  <div id=”loginErr”></div>
+  <div id=”demoHint” style=”display:none”></div>
 </div>
 
 <div id="simToast"></div>
