@@ -938,6 +938,13 @@ function processIncomingWAMessage(msg) {
   const text = msg.content || '';
   if (!text) return;
 
+  // Deduplicación cross-tab: evita que dos tabs procesen el mismo mensaje
+  const msgId = msg.id || `${msg.timestamp}_${msg.sender}`;
+  const lsKey = 'crd_ai_lock_' + msgId;
+  if (localStorage.getItem(lsKey)) return;
+  localStorage.setItem(lsKey, '1');
+  setTimeout(() => localStorage.removeItem(lsKey), 5 * 60 * 1000);
+
   // Buscar lead existente por teléfono o por chatJid
   const existing = Object.values(leadsData).find(l =>
     (l.waJid && l.waJid === chatJid) ||
