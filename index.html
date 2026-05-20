@@ -318,7 +318,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V1.7</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V1.8</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -1077,10 +1077,20 @@ async function sendMessage() {
     div.innerHTML = `<div class="msg-bubble">${esc(text)}</div><div class="msg-meta">${esc(author)}  ahora</div>`;
     msgList.appendChild(div);
     msgList.scrollTop = msgList.scrollHeight;
-    // Broadcast reply to simulator
-    const simLead = leadsData[currentLeadId];
-    if (window._simCh && simLead && simLead._simContactId) {
-      window._simCh.postMessage({ type:'crm_reply', to:simLead._simContactId, text, author });
+    // Enviar por WhatsApp automáticamente si el lead tiene teléfono
+    const lead = leadsData[currentLeadId];
+    if (lead && lead.phone) {
+      const recipient = lead.phone.replace(/\D/g, '');
+      fetch(`${BRIDGE_URL}/api/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipient, message: text })
+      }).then(r => r.json()).then(d => {
+        if (!d.success) showToast('⚠️ No se pudo enviar por WA');
+      }).catch(() => showToast('⚠️ Bridge desconectado'));
+    }
+    if (window._simCh && lead && lead._simContactId) {
+      window._simCh.postMessage({ type:'crm_reply', to:lead._simContactId, text, author });
     }
     return;
   }
