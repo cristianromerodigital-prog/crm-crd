@@ -300,7 +300,7 @@ select.info-input option{background:#fff}
     <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V2.15</div>
+    <div class="login-version">V2.16</div>
     <div id="demoHint" style="display:none;margin-top:20px;padding:12px;background:#1e293b;border-radius:8px;font-size:12px;color:#94a3b8;text-align:left;line-height:1.8">
       <strong style="color:#c9a84c">Modo Demo</strong><br>
       nico@crm.com &nbsp;&nbsp;&nbsp;/ palacio123<br>
@@ -320,7 +320,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.15</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.16</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -811,7 +811,7 @@ document.getElementById('loginPass').addEventListener('keydown', e => {
 // APP START
 // ════════════════════════════════════════════════════════════
 const BRIDGE_URL = 'https://bridge.cristianromerodigital.ar';
-let _lastMsgTimestamp = Math.floor(Date.now() / 1000) - 300; // últimos 5 min al arrancar
+let _lastMsgTimestamp = parseInt(localStorage.getItem('crd_last_msg_ts') || '0') || (Math.floor(Date.now() / 1000) - 30);
 const _processedMsgIds = new Set();
 
 async function startApp() {
@@ -921,6 +921,7 @@ function startWAPolling() {
       const msgs = await r.json();
       if (!msgs.length) return;
       _lastMsgTimestamp = Math.max(...msgs.map(m => m.timestamp));
+      localStorage.setItem('crd_last_msg_ts', _lastMsgTimestamp);
       msgs.forEach(msg => {
         const msgId = msg.id || `${msg.timestamp}_${msg.sender}`;
         if (_processedMsgIds.has(msgId)) return;

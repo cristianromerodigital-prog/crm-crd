@@ -116,6 +116,7 @@ async function callGemini(env, messages) {
     }
   );
   const data = await res.json();
+  if (!data.candidates) console.error('Gemini error:', JSON.stringify(data).slice(0,300));
   return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
