@@ -300,7 +300,7 @@ select.info-input option{background:#fff}
     <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V2.21</div>
+    <div class="login-version">V2.22</div>
     <div id="demoHint" style="display:none;margin-top:20px;padding:12px;background:#1e293b;border-radius:8px;font-size:12px;color:#94a3b8;text-align:left;line-height:1.8">
       <strong style="color:#c9a84c">Modo Demo</strong><br>
       nico@crm.com &nbsp;&nbsp;&nbsp;/ palacio123<br>
@@ -320,7 +320,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.21</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.22</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -668,6 +668,27 @@ async function apiAddMessage(leadId, direction, text, author) {
     });
   } catch(e) { console.warn('API addMessage failed', e); }
 }
+async function apiLoadLeadAndRefresh(leadId) {
+  // Recarga mensajes desde D1 y muestra la reply del bot en el chat panel
+  try {
+    const msgs = await apiGetMessages(leadId);
+    if (!msgs.length) return;
+    if (!window._demoConvs) window._demoConvs = {};
+    window._demoConvs[leadId] = msgs.map(m => ({
+      dir: m.direction === 'out' ? 'out' : 'in',
+      text: m.text, who: m.author || '', time: 'ahora'
+    }));
+    if (currentLeadId === leadId) {
+      const msgList = document.getElementById('msgList');
+      if (msgList) {
+        msgList.innerHTML = window._demoConvs[leadId].map(m =>
+          `<div class="msg ${m.dir}"><div class="msg-bubble">${esc(m.text)}</div><div class="msg-meta">${m.dir==='out'?(m.who||'Ángela')+' ':""}ahora</div></div>`
+        ).join('');
+        msgList.scrollTop = msgList.scrollHeight;
+      }
+    }
+  } catch(_) {}
+}
 
 function saveWALeads() {
   const waLeads = Object.values(leadsData).filter(l => l.id.startsWith('wa_'));
@@ -956,19 +977,16 @@ function processIncomingWAMessage(msg) {
     (l.phone && l.phone.replace(/\D/g,'').endsWith(phone.replace(/\D/g,'')))
   );
 
+  // El bridge ya maneja la IA y guarda el mensaje en D1.
+  // El browser SOLO actualiza la vista en tiempo real.
   if (existing) {
-    existing.waJid = chatJid; // asegurar que tenga el JID
+    existing.waJid = chatJid;
     existing.lastMessage = text;
     existing.updatedAt = { toDate: () => new Date(msg.timestamp * 1000), seconds: msg.timestamp };
     if (!window._demoConvs) window._demoConvs = {};
     if (!window._demoConvs[existing.id]) window._demoConvs[existing.id] = [];
     window._demoConvs[existing.id].push({ dir:'in', text, time:'ahora' });
-    apiAddMessage(existing.id, 'in', text, '');
     renderCards();
-    // IA responde automáticamente (debounce: cancela llamadas previas del mismo lead)
-    if (!window._aiDebounce) window._aiDebounce = {};
-    clearTimeout(window._aiDebounce[existing.id]);
-    window._aiDebounce[existing.id] = setTimeout(() => callAI(existing.id, text, msgId), 1500);
     if (currentLeadId === existing.id) {
       const msgList = document.getElementById('msgList');
       if (msgList) {
@@ -980,44 +998,29 @@ function processIncomingWAMessage(msg) {
       }
     }
     showToast(`📱 ${existing.name}: ${text.substring(0,40)}`);
+    // Refrescar el lead desde D1 luego de 3s (la IA del bridge ya actualizó)
+    setTimeout(() => apiLoadLeadAndRefresh(existing.id), 3000);
   } else {
-    // Nuevo lead desconocido
-    const id = 'wa_' + Date.now();
-    const displayName = msg.pushName && msg.pushName !== msg.sender ? msg.pushName : phone;
-    leadsData[id] = {
-      id, salon:'otros', name: displayName, phone: '', waJid: chatJid,
-      source:'whatsapp', eventType:'', eventYear:'', stage:'nuevo_lead',
-      guests:0, notes:'', lastMessage: text,
-      updatedAt: { toDate: () => new Date(msg.timestamp * 1000), seconds: msg.timestamp }
-    };
-    leadsData[id]._ts = msg.timestamp * 1000;
-    // Resolver teléfono real y nombre desde whatsapp.db
-    if (chatJid.includes('@lid') || chatJid.includes('@s.whatsapp.net')) {
-      fetch(`${BRIDGE_URL}/api/resolve-phone?jid=${encodeURIComponent(chatJid)}`)
-        .then(r => r.json()).then(d => {
-          const updates = {};
-          if (d.phone) {
-            leadsData[id].phone = '+' + d.phone.replace(/\D/g,'');
-            updates.phone = leadsData[id].phone;
-          }
-          if (d.pushName && d.pushName !== chatJid.split('@')[0]) {
-            leadsData[id].name = d.pushName;
-            updates.name = d.pushName;
-          }
-          if (Object.keys(updates).length) apiUpdateLead(id, updates);
+    // Lead no encontrado en memoria — recargar leads desde D1
+    setTimeout(async () => {
+      try {
+        const r = await fetch(API_URL + '/leads');
+        if (r.ok) {
+          const apiLeads = await r.json();
+          apiLeads.forEach(l => {
+            if (!leadsData[l.id]) leadsData[l.id] = {
+              id:l.id, salon:l.salon, name:l.name, phone:l.phone,
+              waJid:l.wa_jid, source:l.source, eventType:l.event_type,
+              eventYear:l.event_year, stage:l.stage, guests:l.guests,
+              notes:l.notes, lastMessage:l.last_message, _ts:l.updated_at,
+              updatedAt:{ toDate:()=>new Date(l.updated_at), seconds:l.updated_at/1000 }
+            };
+          });
           renderCards();
-        }).catch(() => {});
-    }
-    // Respuesta automática — primer contacto (debounce)
-    if (!window._aiDebounce) window._aiDebounce = {};
-    clearTimeout(window._aiDebounce[id]);
-    window._aiDebounce[id] = setTimeout(() => autoReplyFirstContact(id, displayName), 2000);
-    window._demoConvs = window._demoConvs || {};
-    window._demoConvs[id] = [{ dir:'in', text, time:'ahora' }];
-    apiSaveLead(leadsData[id]);
-    apiAddMessage(id, 'in', text, '');
-    renderCards();
-    showToast(`📱 Nuevo lead WA: ${text.substring(0,40)}`);
+        }
+      } catch(_) {}
+    }, 3000);
+    showToast(`📱 Nuevo mensaje WA: ${text.substring(0,40)}`);
   }
 }
 
