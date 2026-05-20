@@ -1,0 +1,9 @@
+name = "crm-crd-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+account_id = "dfbe646eee80ac1beb366e1447ab357a"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "crm-crd"
+database_id = "3f924867-0d20-4136-acf7-1215302a29ae"
