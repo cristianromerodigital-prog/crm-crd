@@ -318,7 +318,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V1.8</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V1.9</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -761,14 +761,19 @@ function startWAPolling() {
 }
 
 function processIncomingWAMessage(msg) {
-  const phone = msg.sender.replace('@s.whatsapp.net', '').replace('@lid', '');
+  const chatJid = msg.chatJid || msg.sender; // JID completo para responder
+  const phone = chatJid.replace('@s.whatsapp.net', '').replace('@lid', '');
   const text = msg.content || '';
   if (!text) return;
 
-  // Buscar lead existente por teléfono
-  const existing = Object.values(leadsData).find(l => l.phone && l.phone.replace(/\D/g,'').endsWith(phone.replace(/\D/g,'')));
+  // Buscar lead existente por teléfono o por chatJid
+  const existing = Object.values(leadsData).find(l =>
+    (l.waJid && l.waJid === chatJid) ||
+    (l.phone && l.phone.replace(/\D/g,'').endsWith(phone.replace(/\D/g,'')))
+  );
 
   if (existing) {
+    existing.waJid = chatJid; // asegurar que tenga el JID
     existing.lastMessage = text;
     existing.updatedAt = { toDate: () => new Date(msg.timestamp * 1000), seconds: msg.timestamp };
     if (!window._demoConvs) window._demoConvs = {};
@@ -790,7 +795,7 @@ function processIncomingWAMessage(msg) {
     // Nuevo lead desconocido
     const id = 'wa_' + Date.now();
     leadsData[id] = {
-      id, salon:'otros', name: phone, phone: '+' + phone,
+      id, salon:'otros', name: phone, phone: '', waJid: chatJid,
       source:'whatsapp', eventType:'', eventYear:'', stage:'nuevo_lead',
       guests:0, notes:'', lastMessage: text,
       updatedAt: { toDate: () => new Date(msg.timestamp * 1000), seconds: msg.timestamp }
@@ -1079,8 +1084,8 @@ async function sendMessage() {
     msgList.scrollTop = msgList.scrollHeight;
     // Enviar por WhatsApp automáticamente si el lead tiene teléfono
     const lead = leadsData[currentLeadId];
-    if (lead && lead.phone) {
-      const recipient = lead.phone.replace(/\D/g, '');
+    if (lead && (lead.waJid || lead.phone)) {
+      const recipient = lead.waJid || lead.phone.replace(/\D/g, '');
       fetch(`${BRIDGE_URL}/api/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
