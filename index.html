@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRM — Cristian Romero Digital</title>
+<title>CRM â€” Cristian Romero Digital</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json"/>
@@ -34,7 +34,7 @@ html,body{height:100%;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
 button{cursor:pointer;border:none;font-family:inherit}
 
-/* ─── LOGIN ─── */
+/* â”€â”€â”€ LOGIN â”€â”€â”€ */
 #loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:#111111;background-image:radial-gradient(ellipse at 50% 0%, #2a2010 0%, #111111 60%)}
 .login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;width:360px;text-align:center;box-shadow:var(--shadow-lg)}
 .login-logo{font-size:13px;font-weight:800;letter-spacing:3px;color:var(--accent);margin-bottom:2px}
@@ -49,7 +49,7 @@ button{cursor:pointer;border:none;font-family:inherit}
 .login-error{color:var(--red);font-size:12px;margin-top:10px}
 .login-version{font-size:10px;color:var(--subtle);margin-top:20px;letter-spacing:1px}
 
-/* ─── APP LAYOUT ─── */
+/* â”€â”€â”€ APP LAYOUT â”€â”€â”€ */
 #app{display:none;flex-direction:column;position:fixed;top:0;left:0;right:0;width:100%;overflow:hidden}
 header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;background:var(--header-bg);border-bottom:2px solid var(--accent);flex-shrink:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:20px;letter-spacing:3px;text-transform:uppercase;color:var(--text);margin-right:8px}
@@ -62,7 +62,7 @@ header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;backg
 .btn-icon{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);color:#9a8a5a;font-size:15px;display:flex;align-items:center;justify-content:center;transition:.15s}
 .btn-icon:hover{background:rgba(201,168,76,.2);color:var(--accent)}
 
-/* ─── KANBAN ─── */
+/* â”€â”€â”€ KANBAN â”€â”€â”€ */
 #kanban{display:flex;gap:12px;padding:16px;overflow-x:auto;flex:1;align-items:flex-start;background:var(--bg)}
 #kanban::-webkit-scrollbar{height:6px}
 #kanban::-webkit-scrollbar-track{background:transparent}
@@ -76,7 +76,7 @@ header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;backg
 .stage-cards::-webkit-scrollbar{width:4px}
 .stage-cards::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-/* ─── LEAD CARD ─── */
+/* â”€â”€â”€ LEAD CARD â”€â”€â”€ */
 .lead-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.05)}
 .lead-card:hover{border-color:var(--accent);box-shadow:0 4px 16px rgba(201,168,76,.15);transform:translateY(-1px)}
 .card-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -94,7 +94,7 @@ header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;backg
 .add-lead-card{border:1px dashed var(--border);background:transparent;color:var(--subtle);font-size:12px;padding:10px;border-radius:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
 .add-lead-card:hover{border-color:var(--accent);color:var(--accent)}
 
-/* ─── LEAD PANEL ─── */
+/* â”€â”€â”€ LEAD PANEL â”€â”€â”€ */
 #leadPanel{position:fixed;right:0;top:0;bottom:0;width:480px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s ease;z-index:100;box-shadow:-8px 0 32px rgba(0,0,0,.12);overflow:hidden}
 #leadPanel.open{transform:translateX(0)}
 .panel-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--header-bg)}
@@ -108,7 +108,7 @@ header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;backg
 .p-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 .panel-body{flex:1;overflow:hidden;display:flex;flex-direction:column;background:var(--surface);min-height:0}
 
-/* ─── CHAT TAB ─── */
+/* â”€â”€â”€ CHAT TAB â”€â”€â”€ */
 #tabChat{display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0}
 .msg-list{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--bg);min-height:0}
 .msg-list::-webkit-scrollbar{width:4px}
@@ -127,7 +127,7 @@ header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;backg
 .btn-send:hover{background:var(--accent);color:var(--header-bg)}
 .chat-note{font-size:11px;color:var(--subtle);padding:8px 16px 0;text-align:center;background:var(--bg)}
 
-/* ─── INFO TAB ─── */
+/* â”€â”€â”€ INFO TAB â”€â”€â”€ */
 #tabInfo{display:none;padding:16px;overflow-y:auto;flex:1;background:var(--surface)}
 #tabInfo::-webkit-scrollbar{width:4px}
 #tabInfo::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -141,7 +141,7 @@ select.info-input option{background:#fff}
 .btn-save-info:hover{background:var(--accent);color:var(--header-bg)}
 .save-ok{font-size:12px;color:var(--green);text-align:center;margin-top:6px;opacity:0;transition:.3s}
 
-/* ─── TASKS TAB ─── */
+/* â”€â”€â”€ TASKS TAB â”€â”€â”€ */
 #tabTasks{display:none;padding:16px;overflow-y:auto;flex:1;flex-direction:column;background:var(--surface)}
 .task-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
 .task-item{background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:flex-start;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
@@ -159,7 +159,7 @@ select.info-input option{background:#fff}
 .btn-add-task{padding:8px 16px;background:var(--header-bg);color:var(--accent);border-radius:8px;font-size:13px;font-weight:700;transition:.2s;border:1px solid var(--accent)}
 .btn-add-task:hover{background:var(--accent);color:var(--header-bg)}
 
-/* ─── TEMPLATES TAB ─── */
+/* â”€â”€â”€ TEMPLATES TAB â”€â”€â”€ */
 #tabTemplates{display:none;padding:12px;overflow-y:auto;flex:1;background:var(--surface)}
 #tabTemplates::-webkit-scrollbar{width:4px}
 #tabTemplates::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -172,7 +172,7 @@ select.info-input option{background:#fff}
 .tpl-card:hover .tpl-copy{color:var(--accent)}
 .tpl-copied{color:var(--green)!important}
 
-/* ─── ADD LEAD MODAL ─── */
+/* â”€â”€â”€ ADD LEAD MODAL â”€â”€â”€ */
 .modal-overlay{position:fixed;inset:0;background:rgba(13,11,6,.7);z-index:200;display:flex;align-items:center;justify-content:center;display:none;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
 .modal-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;width:440px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
@@ -184,11 +184,11 @@ select.info-input option{background:#fff}
 .btn-confirm{flex:1;padding:10px;background:var(--header-bg);color:var(--accent);border-radius:8px;font-size:13px;font-weight:700;transition:.2s;border:1px solid var(--accent)}
 .btn-confirm:hover{background:var(--accent);color:var(--header-bg)}
 
-/* ─── FAB ─── */
+/* â”€â”€â”€ FAB â”€â”€â”€ */
 #fabAdd{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--header-bg);color:var(--accent);font-size:26px;box-shadow:0 4px 20px rgba(0,0,0,.3),0 0 0 1px var(--accent);display:flex;align-items:center;justify-content:center;z-index:50;transition:.2s}
 #fabAdd:hover{background:var(--accent);color:var(--header-bg);transform:scale(1.08)}
 
-/* ─── ADMIN MODAL ─── */
+/* â”€â”€â”€ ADMIN MODAL â”€â”€â”€ */
 #adminModal{position:fixed;inset:0;background:rgba(13,11,6,.75);z-index:400;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;backdrop-filter:blur(4px)}
 #adminModal.open{display:flex}
 .admin-box{background:#fff;border:1px solid var(--border);border-radius:16px;width:600px;max-width:100%;margin:auto;box-shadow:var(--shadow-lg)}
@@ -227,7 +227,7 @@ select.info-input option{background:#fff}
 .user-email-r{font-size:11px;color:var(--muted)}
 .user-role{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--surface);color:var(--muted);border:1px solid var(--border)}
 
-/* ─── RESPONSIVE ─── */
+/* â”€â”€â”€ RESPONSIVE â”€â”€â”€ */
 @media(max-width:768px){
   #leadPanel{width:100vw}
   #fabAdd{bottom:16px;right:16px}
@@ -274,7 +274,7 @@ select.info-input option{background:#fff}
   #stageIndicator{display:none!important}
 }
 
-/* ─── STAGE CHANGE MODAL ─── */
+/* â”€â”€â”€ STAGE CHANGE MODAL â”€â”€â”€ */
 #stageModal{position:fixed;inset:0;background:rgba(13,11,6,.75);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 #stageModal.open{display:flex}
 .stage-picker{background:#fff;border:1px solid var(--border);border-radius:16px;padding:0;width:320px;max-height:80vh;overflow:hidden;box-shadow:var(--shadow-lg);display:flex;flex-direction:column}
@@ -283,65 +283,65 @@ select.info-input option{background:#fff}
 .stage-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:.15s;font-size:13px;color:var(--text)}
 .stage-option:hover{background:var(--surface2)}
 .stage-option .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-/* ─── SIMULATOR TOAST ─── */
+/* â”€â”€â”€ SIMULATOR TOAST â”€â”€â”€ */
 #simToast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--header-bg);color:var(--header-text);padding:10px 18px;border-radius:24px;font-size:13px;font-weight:600;z-index:9999;pointer-events:none;opacity:0;transition:opacity .25s,transform .25s;white-space:nowrap;display:flex;align-items:center;gap:8px;border:1px solid var(--accent)}
 #simToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- ─── LOGIN ─── -->
+<!-- â”€â”€â”€ LOGIN â”€â”€â”€ -->
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo" style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:4px;font-weight:300">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></div>
-    <div class="login-sub">Fotografía · CRM</div>
+    <div class="login-sub">FotografÃ­a Â· CRM</div>
     <div class="login-divider"></div>
     <h1>Acceso al sistema</h1>
-    <p>Ingresá con tu cuenta</p>
+    <p>IngresÃ¡ con tu cuenta</p>
     <input type="email" id="loginEmail" placeholder="Email" autocomplete="email"/>
-    <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
+    <input type="password" id="loginPass" placeholder="ContraseÃ±a" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V1.2 — CRD</div>
+    <div class="login-version">V1.2 â€” CRD</div>
     <div id="demoHint" style="display:none"></div>
   </div>
 </div>
 
 <div id="simToast"></div>
 
-<!-- ─── APP ─── -->
+<!-- â”€â”€â”€ APP â”€â”€â”€ -->
 <div id="app">
   <header>
     <div class="logo">CR<span>D</span></div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button>
-      <button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button>
-      <button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button>
-      <button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
+      <button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">ðŸ’ Bodas</button>
+      <button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">ðŸŽ€ 15 aÃ±os</button>
+      <button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">ðŸ“¸ Otros</button>
     </div>
     <div class="header-right">
       <span class="user-name" id="headerUser"></span>
-      <button class="btn-icon" id="btnAdmin" onclick="openAdmin()" title="Configuración" style="display:none">⚙</button>
-      <button class="btn-icon" onclick="doLogout()" title="Cerrar sesión">⎋</button>
+      <button class="btn-icon" id="btnAdmin" onclick="openAdmin()" title="ConfiguraciÃ³n" style="display:none">âš™</button>
+      <button class="btn-icon" onclick="doLogout()" title="Cerrar sesiÃ³n">âŽ‹</button>
     </div>
   </header>
   <div id="stageIndicator"></div>
   <div id="kanban"></div>
 </div>
 
-<!-- ─── LEAD PANEL ─── -->
+<!-- â”€â”€â”€ LEAD PANEL â”€â”€â”€ -->
 <div id="leadPanel">
   <div class="panel-head">
     <div class="panel-source" id="panelSource"></div>
     <div class="panel-name" id="panelName"></div>
     <button class="panel-stage-sel" id="panelStageSel" onclick="openStageModal()"></button>
-    <button class="btn-close-panel" onclick="closePanel()">×</button>
+    <button class="btn-close-panel" onclick="closePanel()">Ã—</button>
   </div>
   <div class="panel-tabs">
-    <button class="p-tab active" onclick="switchTab('chat')">💬 Conversación</button>
-    <button class="p-tab" onclick="switchTab('info')">📋 Info</button>
-    <button class="p-tab" onclick="switchTab('tasks')">✅ Tareas</button>
-    <button class="p-tab" onclick="switchTab('templates')">📝 Plantillas</button>
+    <button class="p-tab active" onclick="switchTab('chat')">ðŸ’¬ ConversaciÃ³n</button>
+    <button class="p-tab" onclick="switchTab('info')">ðŸ“‹ Info</button>
+    <button class="p-tab" onclick="switchTab('tasks')">âœ… Tareas</button>
+    <button class="p-tab" onclick="switchTab('templates')">ðŸ“ Plantillas</button>
   </div>
   <div class="panel-body">
     <!-- CHAT -->
@@ -350,7 +350,7 @@ select.info-input option{background:#fff}
       <div class="msg-list" id="msgList"></div>
       <div class="chat-input-area">
         <textarea class="chat-input" id="chatInput" rows="1" placeholder="Escribir mensaje..." onkeydown="chatKeydown(event)" oninput="autoResize(this)" ></textarea>
-        <button class="btn-send" onclick="sendMessage()">▲</button>
+        <button class="btn-send" onclick="sendMessage()">â–²</button>
       </div>
     </div>
     <!-- INFO -->
@@ -360,7 +360,7 @@ select.info-input option{background:#fff}
         <input class="info-input" id="infoName" placeholder="Nombre completo"/>
       </div>
       <div class="info-row">
-        <div class="info-label">Teléfono / WhatsApp</div>
+        <div class="info-label">TelÃ©fono / WhatsApp</div>
         <input class="info-input" id="infoPhone" placeholder="+54 9 11 0000-0000"/>
       </div>
       <div class="info-2col">
@@ -369,17 +369,17 @@ select.info-input option{background:#fff}
           <select class="info-input" id="infoType">
             <option value="">Seleccionar</option>
             <option>Boda</option>
-            <option>15 años</option>
+            <option>15 aÃ±os</option>
             <option>Corporativo</option>
             <option>Bautismo</option>
-            <option>Cumpleaños</option>
+            <option>CumpleaÃ±os</option>
             <option>Otro</option>
           </select>
         </div>
         <div class="info-row">
-          <div class="info-label">Año del evento</div>
+          <div class="info-label">AÃ±o del evento</div>
           <select class="info-input" id="infoYear">
-            <option value="">Año</option>
+            <option value="">AÃ±o</option>
             <option>2025</option>
             <option>2026</option>
             <option>2027</option>
@@ -423,14 +423,14 @@ select.info-input option{background:#fff}
         <textarea class="info-input" id="infoNotes" rows="4" style="resize:vertical" placeholder="Observaciones, preferencias, contexto..."></textarea>
       </div>
       <button class="btn-save-info" onclick="saveInfo()">Guardar cambios</button>
-      <div class="save-ok" id="saveOk">✓ Guardado</div>
+      <div class="save-ok" id="saveOk">âœ“ Guardado</div>
     </div>
     <!-- TASKS -->
     <div id="tabTasks" style="display:none;flex-direction:column">
       <div style="padding:12px 16px;flex:1;overflow-y:auto">
         <div class="task-list" id="taskList"></div>
         <div class="add-task-form">
-          <input id="taskText" placeholder="Descripción de la tarea..."/>
+          <input id="taskText" placeholder="DescripciÃ³n de la tarea..."/>
           <div class="add-task-row">
             <input id="taskDate" type="datetime-local"/>
             <button class="btn-add-task" onclick="addTask()">+ Agregar</button>
@@ -445,7 +445,7 @@ select.info-input option{background:#fff}
   </div>
 </div>
 
-<!-- ─── STAGE PICKER MODAL ─── -->
+<!-- â”€â”€â”€ STAGE PICKER MODAL â”€â”€â”€ -->
 <div id="stageModal">
   <div class="stage-picker">
     <h3>Cambiar etapa</h3>
@@ -453,23 +453,23 @@ select.info-input option{background:#fff}
   </div>
 </div>
 
-<!-- ─── ADMIN MODAL ─── -->
+<!-- â”€â”€â”€ ADMIN MODAL â”€â”€â”€ -->
 <div id="adminModal">
   <div class="admin-box">
     <div class="admin-head">
-      <h2>⚙ Configuración</h2>
-      <button class="btn-close-panel" onclick="closeAdmin()">×</button>
+      <h2>âš™ ConfiguraciÃ³n</h2>
+      <button class="btn-close-panel" onclick="closeAdmin()">Ã—</button>
     </div>
     <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchAdminTab('stages')">📋 Etapas del flujo</button>
-      <button class="admin-tab" onclick="switchAdminTab('templates')">📝 Plantillas</button>
-      <button class="admin-tab" onclick="switchAdminTab('users')">👥 Usuarios</button>
+      <button class="admin-tab active" onclick="switchAdminTab('stages')">ðŸ“‹ Etapas del flujo</button>
+      <button class="admin-tab" onclick="switchAdminTab('templates')">ðŸ“ Plantillas</button>
+      <button class="admin-tab" onclick="switchAdminTab('users')">ðŸ‘¥ Usuarios</button>
     </div>
     <div class="admin-body" id="adminBody"></div>
   </div>
 </div>
 
-<!-- ─── ADD LEAD MODAL ─── -->
+<!-- â”€â”€â”€ ADD LEAD MODAL â”€â”€â”€ -->
 <div class="modal-overlay" id="addLeadModal">
   <div class="modal-box">
     <h2>Nuevo Lead</h2>
@@ -478,7 +478,7 @@ select.info-input option{background:#fff}
       <input class="info-input" id="newName" placeholder="Nombre completo"/>
     </div>
     <div class="info-row">
-      <div class="info-label">Teléfono / WhatsApp</div>
+      <div class="info-label">TelÃ©fono / WhatsApp</div>
       <input class="info-input" id="newPhone" placeholder="+54 9 11 0000-0000"/>
     </div>
     <div class="info-2col">
@@ -487,17 +487,17 @@ select.info-input option{background:#fff}
         <select class="info-input" id="newType">
           <option value="">Seleccionar</option>
           <option>Boda</option>
-          <option>15 años</option>
+          <option>15 aÃ±os</option>
           <option>Corporativo</option>
           <option>Bautismo</option>
-          <option>Cumpleaños</option>
+          <option>CumpleaÃ±os</option>
           <option>Otro</option>
         </select>
       </div>
       <div class="info-row">
-        <div class="info-label">Año</div>
+        <div class="info-label">AÃ±o</div>
         <select class="info-input" id="newYear">
-          <option value="">Año</option>
+          <option value="">AÃ±o</option>
           <option>2025</option>
           <option>2026</option>
           <option>2027</option>
@@ -526,13 +526,13 @@ select.info-input option{background:#fff}
   </div>
 </div>
 
-<!-- ─── FAB ─── -->
+<!-- â”€â”€â”€ FAB â”€â”€â”€ -->
 <button id="fabAdd" onclick="openAddLead()" title="Nuevo lead">+</button>
 
 <script>
-// ════════════════════════════════════════════════════════════
-// CONFIGURACIÓN FIREBASE — reemplazá con tus credenciales
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// CONFIGURACIÃ“N FIREBASE â€” reemplazÃ¡ con tus credenciales
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const FIREBASE_CONFIG = {
   apiKey: "TU_API_KEY",
   authDomain: "TU_PROJECT.firebaseapp.com",
@@ -542,54 +542,54 @@ const FIREBASE_CONFIG = {
   appId: "TU_APP_ID"
 };
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // ETAPAS
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const STAGES = [
   { id:'nuevo_lead',          label:'Nuevo lead',              color:'#dc2626' },
   { id:'consultando',         label:'Consultando',             color:'#ea580c' },
   { id:'datos_completos',     label:'Datos completos',         color:'#d97706' },
   { id:'presupuesto_enviado', label:'Presupuesto enviado',     color:'#2563eb' },
   { id:'indeciso',            label:'Indeciso',                color:'#7c3aed' },
-  { id:'reunion_programada',  label:'Reunión programada',      color:'#0891b2' },
-  { id:'negociacion',         label:'Negociación',             color:'#0d9488' },
-  { id:'seña_cobrada',        label:'Seña cobrada 🎉',         color:'#16a34a' },
+  { id:'reunion_programada',  label:'ReuniÃ³n programada',      color:'#0891b2' },
+  { id:'negociacion',         label:'NegociaciÃ³n',             color:'#0d9488' },
+  { id:'seÃ±a_cobrada',        label:'SeÃ±a cobrada ðŸŽ‰',         color:'#16a34a' },
   { id:'evento',              label:'Evento',                  color:'#059669' },
-  { id:'edicion',             label:'Edición',                 color:'#047857' },
-  { id:'entregado',           label:'Entregado ✓',            color:'#065f46' },
+  { id:'edicion',             label:'EdiciÃ³n',                 color:'#047857' },
+  { id:'entregado',           label:'Entregado âœ“',            color:'#065f46' },
   { id:'perdido',             label:'Lead perdido',            color:'#6b7280' },
 ];
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PLANTILLAS
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const TEMPLATES = [
   { cat:'Primer contacto', items:[
-    { title:'Respuesta inicial', text:'¡Hola! 😊 ¿Cómo estás? Soy Cristian, fotógrafo de eventos. Gracias por escribirme. Para poder pasarte info más ajustada a lo que necesitás, ¿me contás un poco más sobre el evento?' },
-    { title:'Pedir datos clave', text:'¡Que linda fecha! 🎉 Para armar una propuesta personalizada necesito algunos datos:\n\n📅 Fecha del evento\n📍 Salón / Localidad\n👥 Cantidad de invitados\n⏰ Horario del evento\n📸 ¿Solo fotos o video también?\n🌟 ¿Book de exteriores también?\n\nAsí te paso la info que mejor se ajuste a lo que están buscando.' },
-    { title:'Compartir portfolio', text:'¡Hola! Te comparto mi Instagram y mi página web para que conozcas un poco más de mi trabajo:\n\n📸 Instagram: instagram.com/cristian.romero.digital\n🌐 Web: cristianromerodigital.ar\n\n¿Para qué tipo de evento necesitás el servicio?' },
+    { title:'Respuesta inicial', text:'Â¡Hola! ðŸ˜Š Â¿CÃ³mo estÃ¡s? Soy Cristian, fotÃ³grafo de eventos. Gracias por escribirme. Para poder pasarte info mÃ¡s ajustada a lo que necesitÃ¡s, Â¿me contÃ¡s un poco mÃ¡s sobre el evento?' },
+    { title:'Pedir datos clave', text:'Â¡Que linda fecha! ðŸŽ‰ Para armar una propuesta personalizada necesito algunos datos:\n\nðŸ“… Fecha del evento\nðŸ“ SalÃ³n / Localidad\nðŸ‘¥ Cantidad de invitados\nâ° Horario del evento\nðŸ“¸ Â¿Solo fotos o video tambiÃ©n?\nðŸŒŸ Â¿Book de exteriores tambiÃ©n?\n\nAsÃ­ te paso la info que mejor se ajuste a lo que estÃ¡n buscando.' },
+    { title:'Compartir portfolio', text:'Â¡Hola! Te comparto mi Instagram y mi pÃ¡gina web para que conozcas un poco mÃ¡s de mi trabajo:\n\nðŸ“¸ Instagram: instagram.com/cristian.romero.digital\nðŸŒ Web: cristianromerodigital.ar\n\nÂ¿Para quÃ© tipo de evento necesitÃ¡s el servicio?' },
   ]},
   { cat:'Presupuesto', items:[
-    { title:'Presupuesto enviado', text:'¡Hola [NOMBRE]! Ahí te pasé algunos valores para que tengas en cuenta. Cualquier duda que tengas escribime, podemos hacer una videollamada y te comento sobre algunas bonificaciones 😊' },
-    { title:'Proponer videollamada', text:'¡Hola [NOMBRE]! ¿Cómo estás? ¿Pudiste ver el presupuesto? Si querés te cuento más detalle sobre los packs y formas de pago. ¿Tenés 20 minutos esta semana para una llamadita rápida?' },
-    { title:'Post videollamada', text:'¡Hola [NOMBRE]! Un placer charlar hoy. Quedo a disposición para cualquier consulta. Cuando quieran avanzar me avisan y coordinamos los próximos pasos 🤝' },
+    { title:'Presupuesto enviado', text:'Â¡Hola [NOMBRE]! AhÃ­ te pasÃ© algunos valores para que tengas en cuenta. Cualquier duda que tengas escribime, podemos hacer una videollamada y te comento sobre algunas bonificaciones ðŸ˜Š' },
+    { title:'Proponer videollamada', text:'Â¡Hola [NOMBRE]! Â¿CÃ³mo estÃ¡s? Â¿Pudiste ver el presupuesto? Si querÃ©s te cuento mÃ¡s detalle sobre los packs y formas de pago. Â¿TenÃ©s 20 minutos esta semana para una llamadita rÃ¡pida?' },
+    { title:'Post videollamada', text:'Â¡Hola [NOMBRE]! Un placer charlar hoy. Quedo a disposiciÃ³n para cualquier consulta. Cuando quieran avanzar me avisan y coordinamos los prÃ³ximos pasos ðŸ¤' },
   ]},
   { cat:'Seguimiento indecisos', items:[
-    { title:'Check-in suave', text:'¡Hola [NOMBRE]! ¿Cómo van con la organización del evento? Quería saber si pudieron ver el presupuesto y si tienen alguna duda 😊' },
-    { title:'Urgencia — fechas', text:'¡Hola [NOMBRE]! Te escribo porque diciembre se está llenando rápido. Ya tengo varias fechas reservadas para ese mes. Si les interesa, podemos reservar la fecha con una seña pequeña y quedan asegurados 📅' },
-    { title:'Promo especial', text:'¡Hola [NOMBRE]! 😊 Te escribo porque estamos con promociones nuevas esta semana:\n\n✨ Cuotas especiales\n💄 Maquillaje bonificado\n📸 Propuestas más completas\n\nSi les interesa coordinamos una videollamada cortita y les muestro todo sin compromiso 😊' },
-    { title:'Última oportunidad', text:'¡Hola [NOMBRE]! No quiero que pierdan la oportunidad. El [FECHA] es una de mis últimas fechas disponibles del año. Si aún están evaluando, con gusto resuelvo cualquier duda que tengan 🙏' },
+    { title:'Check-in suave', text:'Â¡Hola [NOMBRE]! Â¿CÃ³mo van con la organizaciÃ³n del evento? QuerÃ­a saber si pudieron ver el presupuesto y si tienen alguna duda ðŸ˜Š' },
+    { title:'Urgencia â€” fechas', text:'Â¡Hola [NOMBRE]! Te escribo porque diciembre se estÃ¡ llenando rÃ¡pido. Ya tengo varias fechas reservadas para ese mes. Si les interesa, podemos reservar la fecha con una seÃ±a pequeÃ±a y quedan asegurados ðŸ“…' },
+    { title:'Promo especial', text:'Â¡Hola [NOMBRE]! ðŸ˜Š Te escribo porque estamos con promociones nuevas esta semana:\n\nâœ¨ Cuotas especiales\nðŸ’„ Maquillaje bonificado\nðŸ“¸ Propuestas mÃ¡s completas\n\nSi les interesa coordinamos una videollamada cortita y les muestro todo sin compromiso ðŸ˜Š' },
+    { title:'Ãšltima oportunidad', text:'Â¡Hola [NOMBRE]! No quiero que pierdan la oportunidad. El [FECHA] es una de mis Ãºltimas fechas disponibles del aÃ±o. Si aÃºn estÃ¡n evaluando, con gusto resuelvo cualquier duda que tengan ðŸ™' },
   ]},
   { cat:'Cierre y clientes', items:[
-    { title:'Seña y reserva', text:'¡Qué buenas noticias! 🎊 Para reservar la fecha necesito:\n\n📋 CBU/Alias: [CBU]\n👤 Titular: Cristian Romero\n\nCon la seña la fecha queda confirmada y empezamos a coordinar todo. ¡Vamos a hacer algo hermoso juntos!' },
-    { title:'Día del evento', text:'¡Hola [NOMBRE]! ¡El gran día llegó! 🎉 Nos vemos hoy a las [HORA] en [LUGAR]. Cualquier cosa antes del evento no duden en escribirme. ¡Va a ser increíble!' },
-    { title:'Entrega lista', text:'¡Hola [NOMBRE]! Las fotos están listas 🎊 Ahí te mando el link de acceso a tu galería privada. Espero que les encante. ¡Fue un placer ser parte de su evento!' },
+    { title:'SeÃ±a y reserva', text:'Â¡QuÃ© buenas noticias! ðŸŽŠ Para reservar la fecha necesito:\n\nðŸ“‹ CBU/Alias: [CBU]\nðŸ‘¤ Titular: Cristian Romero\n\nCon la seÃ±a la fecha queda confirmada y empezamos a coordinar todo. Â¡Vamos a hacer algo hermoso juntos!' },
+    { title:'DÃ­a del evento', text:'Â¡Hola [NOMBRE]! Â¡El gran dÃ­a llegÃ³! ðŸŽ‰ Nos vemos hoy a las [HORA] en [LUGAR]. Cualquier cosa antes del evento no duden en escribirme. Â¡Va a ser increÃ­ble!' },
+    { title:'Entrega lista', text:'Â¡Hola [NOMBRE]! Las fotos estÃ¡n listas ðŸŽŠ AhÃ­ te mando el link de acceso a tu galerÃ­a privada. Espero que les encante. Â¡Fue un placer ser parte de su evento!' },
   ]},
 ];
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // ESTADO GLOBAL
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let db, auth;
 let currentSalon = 'todos';
 let currentLeadId = null;
@@ -598,9 +598,9 @@ let unsubLeads = null;
 let unsubMessages = null;
 let unsubTasks = null;
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PERSISTENCIA EN LOCALSTORAGE
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const LS_STAGES    = 'crm_stages';
 const LS_TEMPLATES = 'crm_templates';
 const LS_USERS     = 'crm_users';
@@ -632,20 +632,56 @@ function loadUsers() {
 }
 function saveUsers(users) { localStorage.setItem(LS_USERS, JSON.stringify(users)); }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // USUARIOS DEMO (hardcoded, sin base de datos)
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const DEMO_USERS = [
   { email: 'crd@crd.com', pass: 'crd2026', name: 'Cristian' },
 ];
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // FIREBASE INIT
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+
+// DEMO MODE
+function initDemoMode() {
+  window._demoMode = true;
+  const ago = (h) => ({ toDate: () => new Date(Date.now() - h*3600000), seconds: (Date.now() - h*3600000)/1000 });
+  leadsData = {
+    'c01': { id:'c01', salon:'quince', name:'Judith Talavera', phone:'+5491138838491', source:'whatsapp', eventType:'15 años', eventYear:'2026', stage:'presupuesto_enviado', guests:100, eventDate:'2026-12-18', notes:'CABA. Foto + video. Preguntó por book de exteriores.', lastMessage:'Dale. Muchas gracias 🙌🤩', updatedAt:ago(2) },
+    'c02': { id:'c02', salon:'boda', name:'Laura Méndez', phone:'+5491155443322', source:'whatsapp', eventType:'Boda', eventYear:'2026', stage:'nuevo_lead', guests:150, eventDate:'', notes:'', lastMessage:'Hola! Vi tu trabajo en Instagram, ¿tenés disponibilidad para octubre?', updatedAt:ago(1) },
+    'c03': { id:'c03', salon:'quince', name:'Sofía Romero', phone:'+5491166554433', source:'instagram', eventType:'15 años', eventYear:'2026', stage:'consultando', guests:80, eventDate:'2026-08-10', notes:'Viene por IG. Pidió portfolio.', lastMessage:'¡Me encantan tus fotos! ¿Cuánto sale para 15 años?', updatedAt:ago(4) },
+    'c04': { id:'c04', salon:'boda', name:'Mariana López', phone:'+5491177665544', source:'whatsapp', eventType:'Boda', eventYear:'2026', stage:'indeciso', guests:200, eventDate:'2026-11-22', notes:'Vio presupuesto hace 5 días, no respondió.', lastMessage:'Gracias, lo vemos con mi novio y te avisamos 💍', updatedAt:ago(120) },
+    'c05': { id:'c05', salon:'quince', name:'Valentina Cruz', phone:'+5491188776655', source:'whatsapp', eventType:'15 años', eventYear:'2026', stage:'seña_cobrada', guests:120, eventDate:'2026-09-14', notes:'Seña cobrada $150.000. Fecha confirmada.', lastMessage:'¡Listo! Ya hicimos la transferencia 🎀', updatedAt:ago(48) },
+    'c06': { id:'c06', salon:'boda', name:'Carolina Vega', phone:'+5491199887766', source:'whatsapp', eventType:'Boda', eventYear:'2026', stage:'entregado', guests:180, eventDate:'2026-05-03', notes:'Galería entregada. Muy conformes.', lastMessage:'¡Son hermosas las fotos! Muchas gracias Cristian 😍', updatedAt:ago(240) },
+  };
+  window._demoTasks = {
+    'c01': [{ text:'Llamada de seguimiento', done:false, date:'Mañana · 10:00' }],
+    'c04': [{ text:'Enviar mensaje promo', done:false, date:'Hoy · 18:00' }],
+  };
+  window._demoConvs = {
+    'c01': [
+      { dir:'in',  text:'¿Puedo ver ejemplos de tus trabajos anteriores?', time:'ayer 19:55' },
+      { dir:'out', text:'¡Si claro! Te comparto mi Instagram y mi página web:\n\n📸 instagram.com/cristian.romero.digital\n🌐 cristianromerodigital.ar', who:'Cristian', time:'ayer 19:10' },
+      { dir:'in',  text:'Es para un 15 años el 18 de diciembre 2026', time:'ayer 19:38' },
+      { dir:'out', text:'¡Qué linda fecha! 🎉 Necesito algunos datos:\n\n📅 Fecha · 📍 Salón · 👥 Invitados · ⏰ Horario · 📸 Foto/video', who:'Cristian', time:'ayer 19:45' },
+      { dir:'in',  text:'100 invitados, 9 a 5:30, foto y video', time:'ayer 15:01' },
+      { dir:'out', text:'¡Hola Judith! Ahí te pasé el presupuesto. Cualquier duda podemos hacer una videollamada 😊', who:'Cristian', time:'ayer 18:33' },
+      { dir:'in',  text:'Dale. Muchas gracias 🙌🤩', time:'ayer 18:44' },
+    ],
+    'c02': [{ dir:'in', text:'Hola! Vi tu trabajo en Instagram, ¿tenés disponibilidad para octubre?', time:'hace 1h' }],
+    'c04': [
+      { dir:'out', text:'¡Hola Mariana! Ahí te pasé el presupuesto. ¿Pudieron verlo?', who:'Cristian', time:'hace 5 días' },
+      { dir:'in',  text:'Gracias, lo vemos con mi novio y te avisamos 💍', time:'hace 5 días' },
+    ],
+  };
+  auth = { currentUser: { email:'crd@crd.com' }, signOut: async () => {} };
+}
+
 function initFirebase() {
   const isDemo = FIREBASE_CONFIG.apiKey === 'TU_API_KEY';
   if (isDemo) {
-    console.info('Modo demo activo — sin base de datos');
+    console.info('Modo demo activo â€” sin base de datos');
     initDemoMode();
     initSimulator();
     document.getElementById('demoHint').style.display = 'block';
@@ -677,9 +713,9 @@ function initFirebase() {
   }
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // AUTH
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pass  = document.getElementById('loginPass').value;
@@ -689,7 +725,7 @@ async function doLogin() {
   // Demo mode: validar contra usuarios hardcodeados
   if (window._demoMode) {
     const user = DEMO_USERS.find(u => u.email === email && u.pass === pass);
-    if (!user) { err.textContent = 'Email o contraseña incorrectos'; return; }
+    if (!user) { err.textContent = 'Email o contraseÃ±a incorrectos'; return; }
     resetZoom();
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
@@ -704,7 +740,7 @@ async function doLogin() {
   try {
     await auth.signInWithEmailAndPassword(email, pass);
   } catch(e) {
-    err.textContent = 'Email o contraseña incorrectos';
+    err.textContent = 'Email o contraseÃ±a incorrectos';
   }
 }
 
@@ -720,9 +756,9 @@ document.getElementById('loginPass').addEventListener('keydown', e => {
   if (e.key === 'Enter') doLogin();
 });
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // APP START
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function startApp() {
   // Cargar etapas y plantillas guardadas
   const savedStages = loadStages();
@@ -736,9 +772,9 @@ function startApp() {
   buildTemplates();
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SALON SELECTOR
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function setSalon(salon) {
   currentSalon = salon;
   document.querySelectorAll('.salon-tab').forEach(t => {
@@ -746,65 +782,65 @@ function setSalon(salon) {
   });
   if (unsubLeads) unsubLeads();
   leadsData = {
-    'p01': { id:'p01', eventCategory:'quince', name:'Judith Talavera', phone:'5491138838491', source:'whatsapp', eventType:'15 a�os', eventDate:'2026-12-18', stage:'negociacion', guests:100, notes:'Videollamada realizada. Quieren foto + video. Salon en CABA.', lastMessage:'Queremos saber m�s de los beneficios', updatedAt:ago(1) },
-    'p02': { id:'p02', eventCategory:'quince', name:'Valentina Greco', phone:'5491155443322', source:'whatsapp', eventType:'15 a�os', eventDate:'2026-09-06', stage:'presupuesto_enviado', guests:80, notes:'Le enviamos presupuesto el lunes', lastMessage:'Muchas gracias! Lo veo con mi mam�', updatedAt:ago(6) },
-    'p03': { id:'p03', eventCategory:'boda', name:'Sol y Mat�as', phone:'5491144332211', source:'instagram', eventType:'Boda', eventDate:'2026-11-22', stage:'indeciso', guests:120, notes:'Presupuesto enviado hace 8 d�as, sin respuesta', lastMessage:'Dale, lo charlamos y te avisamos ??', updatedAt:ago(8) },
-    'p04': { id:'p04', eventCategory:'boda', name:'Romina Acosta', phone:'5491166554433', source:'whatsapp', eventType:'Boda', eventDate:'2027-04-10', stage:'reunion_programada', guests:150, notes:'Videollamada ma�ana 17hs', lastMessage:'Perfecto! Ma�ana a las 17 entonces ?', updatedAt:ago(2) },
-    'p05': { id:'p05', eventCategory:'quince', name:'Camila R�os', phone:'', source:'instagram', eventType:'15 a�os', eventDate:'', stage:'nuevo_lead', guests:0, notes:'Entr� por IG, no comparti� n�mero a�n', lastMessage:'Hola! Vi tus fotos en Instagram, me pueden dar info?', updatedAt:ago(1) },
-    'p06': { id:'p06', eventCategory:'boda', name:'Florencia G�mez', phone:'5491144567890', source:'whatsapp', eventType:'Boda', eventDate:'2026-10-17', stage:'consultando', guests:180, notes:'Pregunt� por fotos y video', lastMessage:'�El video incluye highlights o solo la ceremonia?', updatedAt:ago(3) },
-    'p07': { id:'p07', eventCategory:'quince', name:'Sof�a M�ndez', phone:'5491165432100', source:'whatsapp', eventType:'15 a�os', eventDate:'2026-07-19', stage:'datos_completos', guests:90, notes:'Tiene todo: fecha, invitados, horario. Falta presupuesto', lastMessage:'Son 90 personas, de 18 a 1hs, solo fotos por ahora', updatedAt:ago(2) },
-    'p08': { id:'p08', eventCategory:'boda', name:'Carolina Vega', phone:'5491111009988', source:'instagram', eventType:'Boda', eventDate:'2026-08-15', stage:'indeciso', guests:160, notes:'Comparando con otro fot�grafo', lastMessage:'Estamos viendo opciones, en unos d�as te confirmo ??', updatedAt:ago(12) },
+    'p01': { id:'p01', eventCategory:'quince', name:'Judith Talavera', phone:'5491138838491', source:'whatsapp', eventType:'15 aï¿½os', eventDate:'2026-12-18', stage:'negociacion', guests:100, notes:'Videollamada realizada. Quieren foto + video. Salon en CABA.', lastMessage:'Queremos saber mï¿½s de los beneficios', updatedAt:ago(1) },
+    'p02': { id:'p02', eventCategory:'quince', name:'Valentina Greco', phone:'5491155443322', source:'whatsapp', eventType:'15 aï¿½os', eventDate:'2026-09-06', stage:'presupuesto_enviado', guests:80, notes:'Le enviamos presupuesto el lunes', lastMessage:'Muchas gracias! Lo veo con mi mamï¿½', updatedAt:ago(6) },
+    'p03': { id:'p03', eventCategory:'boda', name:'Sol y Matï¿½as', phone:'5491144332211', source:'instagram', eventType:'Boda', eventDate:'2026-11-22', stage:'indeciso', guests:120, notes:'Presupuesto enviado hace 8 dï¿½as, sin respuesta', lastMessage:'Dale, lo charlamos y te avisamos ??', updatedAt:ago(8) },
+    'p04': { id:'p04', eventCategory:'boda', name:'Romina Acosta', phone:'5491166554433', source:'whatsapp', eventType:'Boda', eventDate:'2027-04-10', stage:'reunion_programada', guests:150, notes:'Videollamada maï¿½ana 17hs', lastMessage:'Perfecto! Maï¿½ana a las 17 entonces ?', updatedAt:ago(2) },
+    'p05': { id:'p05', eventCategory:'quince', name:'Camila Rï¿½os', phone:'', source:'instagram', eventType:'15 aï¿½os', eventDate:'', stage:'nuevo_lead', guests:0, notes:'Entrï¿½ por IG, no compartiï¿½ nï¿½mero aï¿½n', lastMessage:'Hola! Vi tus fotos en Instagram, me pueden dar info?', updatedAt:ago(1) },
+    'p06': { id:'p06', eventCategory:'boda', name:'Florencia Gï¿½mez', phone:'5491144567890', source:'whatsapp', eventType:'Boda', eventDate:'2026-10-17', stage:'consultando', guests:180, notes:'Preguntï¿½ por fotos y video', lastMessage:'ï¿½El video incluye highlights o solo la ceremonia?', updatedAt:ago(3) },
+    'p07': { id:'p07', eventCategory:'quince', name:'Sofï¿½a Mï¿½ndez', phone:'5491165432100', source:'whatsapp', eventType:'15 aï¿½os', eventDate:'2026-07-19', stage:'datos_completos', guests:90, notes:'Tiene todo: fecha, invitados, horario. Falta presupuesto', lastMessage:'Son 90 personas, de 18 a 1hs, solo fotos por ahora', updatedAt:ago(2) },
+    'p08': { id:'p08', eventCategory:'boda', name:'Carolina Vega', phone:'5491111009988', source:'instagram', eventType:'Boda', eventDate:'2026-08-15', stage:'indeciso', guests:160, notes:'Comparando con otro fotï¿½grafo', lastMessage:'Estamos viendo opciones, en unos dï¿½as te confirmo ??', updatedAt:ago(12) },
     'p09': { id:'p09', eventCategory:'otros', name:'Empresa Nexo SA', phone:'5491177665544', source:'whatsapp', eventType:'Corporativo', eventDate:'2026-06-20', stage:'presupuesto_enviado', guests:60, notes:'Evento de empresa, cobertura de 4hs', lastMessage:'Lo consulto con mi jefe y te aviso', updatedAt:ago(5) },
-    'p10': { id:'p10', eventCategory:'boda', name:'Daniela Pereyra', phone:'5491133445566', source:'whatsapp', eventType:'Boda', eventDate:'2026-09-27', stage:'se�a_cobrada', guests:140, notes:'Se�a cobrada! Reunion previa en agosto', lastMessage:'Ya hice la transferencia! ??', updatedAt:ago(24) },
-    'p11': { id:'p11', eventCategory:'quince', name:'Agustina Blanco', phone:'5491188776655', source:'whatsapp', eventType:'15 a�os', eventDate:'2026-05-24', stage:'edicion', guests:100, notes:'Evento realizado. Editando galer�a. Entrega en 2 semanas', lastMessage:'Fue hermoso! Esperamos las fotos con mucha ansia ??', updatedAt:ago(72) },
-    'p12': { id:'p12', eventCategory:'boda', name:'Micaela Torres', phone:'5491155443300', source:'whatsapp', eventType:'Boda', eventDate:'2025-12-07', stage:'entregado', guests:170, notes:'Galer�a entregada. Rese�a 5 estrellas en Google.', lastMessage:'Son incre�bles las fotos!! Gracias totales Cristian ??', updatedAt:ago(168) },
-    'p13': { id:'p13', eventCategory:'quince', name:'Luc�a Fern�ndez', phone:'5491199887766', source:'whatsapp', eventType:'15 a�os', eventDate:'2026-11-14', stage:'nuevo_lead', guests:0, notes:'Reci�n lleg� por publicidad de Meta', lastMessage:'Hola! Vi el anuncio en Instagram, quer�a info sobre precios', updatedAt:ago(0.5) },
-    'p14': { id:'p14', eventCategory:'otros', name:'Emilio Paz', phone:'5491122334400', source:'instagram', eventType:'Book', eventDate:'2026-06-10', stage:'datos_completos', guests:1, notes:'Book individual exterior, interesado en pack b�sico', lastMessage:'�Cu�ntas fotos incluye el pack b�sico de book?', updatedAt:ago(4) },
-    'p15': { id:'p15', eventCategory:'boda', name:'Valeria Castillo', phone:'5491100998877', source:'whatsapp', eventType:'Boda', eventDate:'2027-03-15', stage:'perdido', guests:130, notes:'Cerr� con otro fot�grafo por precio', lastMessage:'Gracias! Al final fuimos con otro que nos quedaba m�s cerca', updatedAt:ago(96) },
+    'p10': { id:'p10', eventCategory:'boda', name:'Daniela Pereyra', phone:'5491133445566', source:'whatsapp', eventType:'Boda', eventDate:'2026-09-27', stage:'seï¿½a_cobrada', guests:140, notes:'Seï¿½a cobrada! Reunion previa en agosto', lastMessage:'Ya hice la transferencia! ??', updatedAt:ago(24) },
+    'p11': { id:'p11', eventCategory:'quince', name:'Agustina Blanco', phone:'5491188776655', source:'whatsapp', eventType:'15 aï¿½os', eventDate:'2026-05-24', stage:'edicion', guests:100, notes:'Evento realizado. Editando galerï¿½a. Entrega en 2 semanas', lastMessage:'Fue hermoso! Esperamos las fotos con mucha ansia ??', updatedAt:ago(72) },
+    'p12': { id:'p12', eventCategory:'boda', name:'Micaela Torres', phone:'5491155443300', source:'whatsapp', eventType:'Boda', eventDate:'2025-12-07', stage:'entregado', guests:170, notes:'Galerï¿½a entregada. Reseï¿½a 5 estrellas en Google.', lastMessage:'Son increï¿½bles las fotos!! Gracias totales Cristian ??', updatedAt:ago(168) },
+    'p13': { id:'p13', eventCategory:'quince', name:'Lucï¿½a Fernï¿½ndez', phone:'5491199887766', source:'whatsapp', eventType:'15 aï¿½os', eventDate:'2026-11-14', stage:'nuevo_lead', guests:0, notes:'Reciï¿½n llegï¿½ por publicidad de Meta', lastMessage:'Hola! Vi el anuncio en Instagram, querï¿½a info sobre precios', updatedAt:ago(0.5) },
+    'p14': { id:'p14', eventCategory:'otros', name:'Emilio Paz', phone:'5491122334400', source:'instagram', eventType:'Book', eventDate:'2026-06-10', stage:'datos_completos', guests:1, notes:'Book individual exterior, interesado en pack bï¿½sico', lastMessage:'ï¿½Cuï¿½ntas fotos incluye el pack bï¿½sico de book?', updatedAt:ago(4) },
+    'p15': { id:'p15', eventCategory:'boda', name:'Valeria Castillo', phone:'5491100998877', source:'whatsapp', eventType:'Boda', eventDate:'2027-03-15', stage:'perdido', guests:130, notes:'Cerrï¿½ con otro fotï¿½grafo por precio', lastMessage:'Gracias! Al final fuimos con otro que nos quedaba mï¿½s cerca', updatedAt:ago(96) },
   };
 
   // Conversaciones demo por lead
   window._demoConvs = {
     'p01': [
-      { dir:'in',  text:'�Puedo ver ejemplos de tus trabajos anteriores?', time:'hace 3 d�as' },
-      { dir:'out', text:'Si claro! Te comparto mi Instagram y mi p�gina web ??\ninstagram.com/cristian.romero.digital\ncristianromerodigital.ar', who:'Cristian', time:'hace 3 d�as' },
-      { dir:'in',  text:'Es para un 15 a�os el 18 de diciembre 2026', time:'hace 2 d�as' },
-      { dir:'out', text:'�Que linda fecha! ?? �Me pas�s estos datos?\n� Fecha: 18/12/2026 ?\n� Sal�n / Localidad\n� Cantidad de invitados\n� Horario del evento\n� �book de fotos tambi�n?\n� �solo foto o video tambi�n?', who:'Cristian', time:'hace 2 d�as' },
-      { dir:'in',  text:'Cantidad de invitados 100\nHorario de 9 a 5:30\nQueremos foto, video', time:'hace 1 d�a' },
-      { dir:'out', text:'�Hola Judith! Ah� te pas� algunos valores para que tengas en cuenta. Cualquier duda escribime, podemos hacer una videollamada y te comento sobre algunas bonificaciones ??', who:'Cristian', time:'hace 1 d�a' },
-      { dir:'in',  text:'Queremos saber m�s de los beneficios', time:'hace 1h' },
+      { dir:'in',  text:'ï¿½Puedo ver ejemplos de tus trabajos anteriores?', time:'hace 3 dï¿½as' },
+      { dir:'out', text:'Si claro! Te comparto mi Instagram y mi pï¿½gina web ??\ninstagram.com/cristian.romero.digital\ncristianromerodigital.ar', who:'Cristian', time:'hace 3 dï¿½as' },
+      { dir:'in',  text:'Es para un 15 aï¿½os el 18 de diciembre 2026', time:'hace 2 dï¿½as' },
+      { dir:'out', text:'ï¿½Que linda fecha! ?? ï¿½Me pasï¿½s estos datos?\nï¿½ Fecha: 18/12/2026 ?\nï¿½ Salï¿½n / Localidad\nï¿½ Cantidad de invitados\nï¿½ Horario del evento\nï¿½ ï¿½book de fotos tambiï¿½n?\nï¿½ ï¿½solo foto o video tambiï¿½n?', who:'Cristian', time:'hace 2 dï¿½as' },
+      { dir:'in',  text:'Cantidad de invitados 100\nHorario de 9 a 5:30\nQueremos foto, video', time:'hace 1 dï¿½a' },
+      { dir:'out', text:'ï¿½Hola Judith! Ahï¿½ te pasï¿½ algunos valores para que tengas en cuenta. Cualquier duda escribime, podemos hacer una videollamada y te comento sobre algunas bonificaciones ??', who:'Cristian', time:'hace 1 dï¿½a' },
+      { dir:'in',  text:'Queremos saber mï¿½s de los beneficios', time:'hace 1h' },
     ],
     'p03': [
-      { dir:'in',  text:'Hola! Vi tus fotos en Instagram, hermosas! Es para nuestra boda', time:'hace 10 d�as' },
-      { dir:'out', text:'�Hola Sol! �Muchas gracias! �Me cont�s un poco m�s del evento?', who:'Cristian', time:'hace 10 d�as' },
-      { dir:'in',  text:'Boda el 22 de noviembre 2026, 120 personas, CABA', time:'hace 9 d�as' },
-      { dir:'out', text:'�Hermoso! Les preparo el presupuesto personalizado ??', who:'Cristian', time:'hace 9 d�as' },
-      { dir:'in',  text:'Dale, lo charlamos y te avisamos ??', time:'hace 8 d�as' },
+      { dir:'in',  text:'Hola! Vi tus fotos en Instagram, hermosas! Es para nuestra boda', time:'hace 10 dï¿½as' },
+      { dir:'out', text:'ï¿½Hola Sol! ï¿½Muchas gracias! ï¿½Me contï¿½s un poco mï¿½s del evento?', who:'Cristian', time:'hace 10 dï¿½as' },
+      { dir:'in',  text:'Boda el 22 de noviembre 2026, 120 personas, CABA', time:'hace 9 dï¿½as' },
+      { dir:'out', text:'ï¿½Hermoso! Les preparo el presupuesto personalizado ??', who:'Cristian', time:'hace 9 dï¿½as' },
+      { dir:'in',  text:'Dale, lo charlamos y te avisamos ??', time:'hace 8 dï¿½as' },
     ],
     'p05': [
       { dir:'in',  text:'Hola! Vi tus fotos en Instagram, me pueden dar info?', time:'hace 1h' },
-      { dir:'out', text:'�Hola! Soy Cristian ?? Para poder darte info m�s completa, �me pas�s tu WhatsApp?', who:'Cristian', time:'hace 50m' },
+      { dir:'out', text:'ï¿½Hola! Soy Cristian ?? Para poder darte info mï¿½s completa, ï¿½me pasï¿½s tu WhatsApp?', who:'Cristian', time:'hace 50m' },
     ],
     'p06': [
-      { dir:'in',  text:'Hola! Quer�a saber sobre foto y video para mi boda', time:'hace 3 d�as' },
-      { dir:'out', text:'�Hola Florencia! Claro que s� ?? �Me cont�s la fecha y el sal�n?', who:'Cristian', time:'hace 3 d�as' },
-      { dir:'in',  text:'17 de octubre 2026, 180 personas', time:'hace 3 d�as' },
-      { dir:'in',  text:'�El video incluye highlights o solo la ceremonia?', time:'hace 3h' },
+      { dir:'in',  text:'Hola! Querï¿½a saber sobre foto y video para mi boda', time:'hace 3 dï¿½as' },
+      { dir:'out', text:'ï¿½Hola Florencia! Claro que sï¿½ ?? ï¿½Me contï¿½s la fecha y el salï¿½n?', who:'Cristian', time:'hace 3 dï¿½as' },
+      { dir:'in',  text:'17 de octubre 2026, 180 personas', time:'hace 3 dï¿½as' },
+      { dir:'in',  text:'ï¿½El video incluye highlights o solo la ceremonia?', time:'hace 3h' },
     ],
     'p10': [
-      { dir:'in',  text:'Buenas! Queremos reservar la fecha', time:'hace 2 d�as' },
-      { dir:'out', text:'�Qu� buenas noticias Daniela! ?? Para reservar:\nAlias: cristian.romero\nCon la se�a la fecha queda confirmada ??', who:'Cristian', time:'hace 2 d�as' },
-      { dir:'in',  text:'Ya hice la transferencia! ??', time:'hace 1 d�a' },
+      { dir:'in',  text:'Buenas! Queremos reservar la fecha', time:'hace 2 dï¿½as' },
+      { dir:'out', text:'ï¿½Quï¿½ buenas noticias Daniela! ?? Para reservar:\nAlias: cristian.romero\nCon la seï¿½a la fecha queda confirmada ??', who:'Cristian', time:'hace 2 dï¿½as' },
+      { dir:'in',  text:'Ya hice la transferencia! ??', time:'hace 1 dï¿½a' },
     ],
     'p12': [
-      { dir:'out', text:'�Hola Micaela! Las fotos est�n listas ?? Ah� te mando el link de tu galer�a privada', who:'Cristian', time:'hace 7 d�as' },
-      { dir:'in',  text:'Son incre�bles las fotos!! Gracias totales Cristian ??', time:'hace 6 d�as' },
+      { dir:'out', text:'ï¿½Hola Micaela! Las fotos estï¿½n listas ?? Ahï¿½ te mando el link de tu galerï¿½a privada', who:'Cristian', time:'hace 7 dï¿½as' },
+      { dir:'in',  text:'Son increï¿½bles las fotos!! Gracias totales Cristian ??', time:'hace 6 dï¿½as' },
     ],
   };
 
-  // Mock db — dispara onSnapshot con datos demo reales
+  // Mock db â€” dispara onSnapshot con datos demo reales
   const _msgCbs = {};
-  const _allDemoLeads = { ...leadsData }; // copia fija, no se borra al cambiar salón
+  const _allDemoLeads = { ...leadsData }; // copia fija, no se borra al cambiar salÃ³n
   db = {
     collection: () => ({
       where: (field, op, val) => ({
@@ -872,11 +908,11 @@ function openLead(id) {
     updatePanelHead(lead);
     fillInfoTab(lead);
 
-    // Conversación específica del lead o genérica
+    // ConversaciÃ³n especÃ­fica del lead o genÃ©rica
     const convs = (window._demoConvs && window._demoConvs[id]) || [
-      { dir:'in',  text:'Hola! Me interesa el salón, ¿me pueden dar información?', time:'hace 2 días' },
-      { dir:'out', text:`¡Hola ${lead.name}! Soy Mel. Con gusto te ayudamos. ¿Me contás un poco del evento?`, who:'Mel', time:'hace 2 días' },
-      { dir:'in',  text: lead.lastMessage || '(Sin respuesta aún)', time:'hace 1h' },
+      { dir:'in',  text:'Hola! Me interesa el salÃ³n, Â¿me pueden dar informaciÃ³n?', time:'hace 2 dÃ­as' },
+      { dir:'out', text:`Â¡Hola ${lead.name}! Soy Mel. Con gusto te ayudamos. Â¿Me contÃ¡s un poco del evento?`, who:'Mel', time:'hace 2 dÃ­as' },
+      { dir:'in',  text: lead.lastMessage || '(Sin respuesta aÃºn)', time:'hace 1h' },
     ];
     const msgList = document.getElementById('msgList');
     msgList.innerHTML = convs.map(m => `
@@ -891,10 +927,10 @@ function openLead(id) {
     const tasks = window._demoTasks && window._demoTasks[id] || [];
     document.getElementById('taskList').innerHTML = tasks.map(t => `
       <div class="task-item">
-        <div class="task-check ${t.done?'done':''}">  ${t.done?'✓':''}</div>
+        <div class="task-check ${t.done?'done':''}">  ${t.done?'âœ“':''}</div>
         <div class="task-content">
           <div class="task-text" style="${t.done?'text-decoration:line-through;opacity:.5':''}">${esc(t.text)}</div>
-          ${t.date?`<div class="task-date">📅 ${t.date}</div>`:''}
+          ${t.date?`<div class="task-date">ðŸ“… ${t.date}</div>`:''}
         </div>
       </div>
     `).join('') || '<div style="color:var(--subtle);font-size:13px;text-align:center;padding:20px">Sin tareas</div>';
@@ -906,9 +942,9 @@ function openLead(id) {
   _openLeadOrig(id);
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // HELPERS
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
@@ -921,9 +957,9 @@ function relTime(date) {
   return Math.floor(diff/86400) + 'd';
 }
 
-// ════════════════════════════════════════════════════════════
-// ADMIN — ROLES (solo Mariano y Nico pueden configurar)
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” ROLES (solo Mariano y Nico pueden configurar)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 const ADMIN_NAMES = ['Cristian'];
 
 function checkAdminAccess(name) {
@@ -932,9 +968,9 @@ function checkAdminAccess(name) {
   }
 }
 
-// ════════════════════════════════════════════════════════════
-// ADMIN — OPEN / CLOSE / TABS
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” OPEN / CLOSE / TABS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let adminCurrentTab = 'stages';
 
 function openAdmin() {
@@ -961,18 +997,18 @@ function switchAdminTab(tab) {
   if (tab === 'users')     renderUsersAdmin(body);
 }
 
-// ════════════════════════════════════════════════════════════
-// ADMIN — ETAPAS DEL FLUJO
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” ETAPAS DEL FLUJO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderStagesAdmin(body) {
   const stages = [...STAGES];
   body.innerHTML = `
     <p style="font-size:12px;color:var(--muted);margin-bottom:14px">
-      Definí las etapas del pipeline. El orden aquí determina el orden en el tablero.
+      DefinÃ­ las etapas del pipeline. El orden aquÃ­ determina el orden en el tablero.
     </p>
     <div id="stageAdminList"></div>
     <button class="btn-add-stage" onclick="adminAddStage()">+ Nueva etapa</button>
-    <button class="admin-save" onclick="adminSaveStages()">💾 Guardar cambios</button>
+    <button class="admin-save" onclick="adminSaveStages()">ðŸ’¾ Guardar cambios</button>
   `;
   renderStageAdminList(stages);
 }
@@ -986,9 +1022,9 @@ function renderStageAdminList(stages) {
         oninput="adminUpdateStageColor(${i}, this.value)" title="Cambiar color"/>
       <input class="stage-row-name" value="${esc(s.label)}" placeholder="Nombre de la etapa"
         oninput="adminUpdateStageName(${i}, this.value)"/>
-      <button class="stage-move" onclick="adminMoveStage(${i},-1)" ${i===0?'disabled style=opacity:.2':''}>↑</button>
-      <button class="stage-move" onclick="adminMoveStage(${i},1)" ${i===stages.length-1?'disabled style=opacity:.2':''}>↓</button>
-      <button class="stage-del" onclick="adminDeleteStage(${i})" title="Eliminar">✕</button>
+      <button class="stage-move" onclick="adminMoveStage(${i},-1)" ${i===0?'disabled style=opacity:.2':''}>â†‘</button>
+      <button class="stage-move" onclick="adminMoveStage(${i},1)" ${i===stages.length-1?'disabled style=opacity:.2':''}>â†“</button>
+      <button class="stage-del" onclick="adminDeleteStage(${i})" title="Eliminar">âœ•</button>
     </div>
   `).join('');
 }
@@ -1018,7 +1054,7 @@ function adminAddStage() {
 function adminDeleteStage(i) {
   const s = getEditStages();
   if (s.length <= 2) { alert('Debe haber al menos 2 etapas'); return; }
-  if (!confirm(`¿Eliminar "${s[i].label}"?`)) return;
+  if (!confirm(`Â¿Eliminar "${s[i].label}"?`)) return;
   s.splice(i, 1);
   renderStageAdminList(s);
 }
@@ -1033,7 +1069,7 @@ function adminMoveStage(i, dir) {
 
 function adminSaveStages() {
   const s = getEditStages();
-  // Sincronizar nombres desde inputs (por si no se disparó oninput)
+  // Sincronizar nombres desde inputs (por si no se disparÃ³ oninput)
   document.querySelectorAll('.stage-row').forEach((row, i) => {
     const inp = row.querySelector('.stage-row-name');
     if (inp) s[i].label = inp.value.trim() || s[i].label;
@@ -1048,17 +1084,17 @@ function adminSaveStages() {
   closeAdmin();
 }
 
-// ════════════════════════════════════════════════════════════
-// ADMIN — PLANTILLAS
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” PLANTILLAS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderTemplatesAdmin(body) {
   body.innerHTML = `
     <p style="font-size:12px;color:var(--muted);margin-bottom:14px">
-      Editá las plantillas de mensajes por categoría.
+      EditÃ¡ las plantillas de mensajes por categorÃ­a.
     </p>
     <div id="tplAdminList"></div>
-    <button class="btn-add-stage" onclick="adminAddTplCat()">+ Nueva categoría</button>
-    <button class="admin-save" onclick="adminSaveTemplates()">💾 Guardar plantillas</button>
+    <button class="btn-add-stage" onclick="adminAddTplCat()">+ Nueva categorÃ­a</button>
+    <button class="admin-save" onclick="adminSaveTemplates()">ðŸ’¾ Guardar plantillas</button>
   `;
   renderTplAdminList();
 }
@@ -1068,17 +1104,17 @@ function renderTplAdminList() {
   list.innerHTML = TEMPLATES.map((cat, ci) => `
     <div style="margin-bottom:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px">
       <div class="tpl-admin-cat">
-        <span style="font-size:16px">📁</span>
-        <input value="${esc(cat.cat)}" placeholder="Categoría"
+        <span style="font-size:16px">ðŸ“</span>
+        <input value="${esc(cat.cat)}" placeholder="CategorÃ­a"
           oninput="TEMPLATES[${ci}].cat=this.value"
           style="font-weight:700;font-size:13px;background:transparent;border:none;color:var(--text);outline:none;flex:1;border-bottom:1px solid var(--border)"/>
-        <button class="stage-del" onclick="adminDeleteTplCat(${ci})" title="Eliminar categoría">✕</button>
+        <button class="stage-del" onclick="adminDeleteTplCat(${ci})" title="Eliminar categorÃ­a">âœ•</button>
       </div>
       ${cat.items.map((t, ti) => `
         <div class="tpl-admin-row">
-          <input value="${esc(t.title)}" placeholder="Título" oninput="TEMPLATES[${ci}].items[${ti}].title=this.value"/>
+          <input value="${esc(t.title)}" placeholder="TÃ­tulo" oninput="TEMPLATES[${ci}].items[${ti}].title=this.value"/>
           <textarea placeholder="Texto del mensaje" oninput="TEMPLATES[${ci}].items[${ti}].text=this.value">${esc(t.text)}</textarea>
-          <button class="stage-del" onclick="adminDeleteTpl(${ci},${ti})">✕</button>
+          <button class="stage-del" onclick="adminDeleteTpl(${ci},${ti})">âœ•</button>
         </div>
       `).join('')}
       <button class="btn-add-stage" style="margin-top:6px" onclick="adminAddTplItem(${ci})">+ Agregar mensaje</button>
@@ -1087,12 +1123,12 @@ function renderTplAdminList() {
 }
 
 function adminAddTplCat() {
-  TEMPLATES.push({ cat: 'Nueva categoría', items: [] });
+  TEMPLATES.push({ cat: 'Nueva categorÃ­a', items: [] });
   renderTplAdminList();
 }
 
 function adminDeleteTplCat(ci) {
-  if (!confirm('¿Eliminar esta categoría y todos sus mensajes?')) return;
+  if (!confirm('Â¿Eliminar esta categorÃ­a y todos sus mensajes?')) return;
   TEMPLATES.splice(ci, 1);
   renderTplAdminList();
 }
@@ -1113,18 +1149,18 @@ function adminSaveTemplates() {
   closeAdmin();
 }
 
-// ════════════════════════════════════════════════════════════
-// ADMIN — USUARIOS
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” USUARIOS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderUsersAdmin(body) {
   const users = loadUsers() || DEMO_USERS;
   body.innerHTML = `
     <p style="font-size:12px;color:var(--muted);margin-bottom:14px">
-      Usuarios con acceso al CRM. La contraseña se muestra solo en modo demo.
+      Usuarios con acceso al CRM. La contraseÃ±a se muestra solo en modo demo.
     </p>
     <div id="userAdminList"></div>
     <button class="btn-add-stage" onclick="adminAddUser()">+ Agregar usuario</button>
-    <button class="admin-save" onclick="adminSaveUsers()">💾 Guardar usuarios</button>
+    <button class="admin-save" onclick="adminSaveUsers()">ðŸ’¾ Guardar usuarios</button>
   `;
   renderUserAdminList(users);
 }
@@ -1143,11 +1179,11 @@ function renderUserAdminList(users) {
             oninput="adminUpdateUser(${i},'email',this.value)"
             style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:12px;font-family:inherit;outline:none;flex:1"/>
         </div>
-        <input value="${esc(u.pass)}" placeholder="Contraseña" type="text"
+        <input value="${esc(u.pass)}" placeholder="ContraseÃ±a" type="text"
           oninput="adminUpdateUser(${i},'pass',this.value)"
           style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted);font-size:12px;font-family:inherit;outline:none;width:100%"/>
       </div>
-      <button class="stage-del" onclick="adminDeleteUser(${i})" title="Eliminar">✕</button>
+      <button class="stage-del" onclick="adminDeleteUser(${i})" title="Eliminar">âœ•</button>
     </div>
   `).join('');
 }
@@ -1178,9 +1214,9 @@ function adminSaveUsers() {
   closeAdmin();
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // INIT
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Ajusta app y panel al visual viewport real (maneja teclado en iOS/Android)
 function setAppHeight() {
   const vv  = window.visualViewport;
@@ -1210,7 +1246,7 @@ function resetZoom(){
 
 initFirebase();
 
-// ── PWA Service Worker ────────────────────────────────────
+// â”€â”€ PWA Service Worker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
@@ -1219,7 +1255,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// ── Prompt de instalación ─────────────────────────────────
+// â”€â”€ Prompt de instalaciÃ³n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
@@ -1238,7 +1274,7 @@ function showInstallBanner() {
     box-shadow:0 4px 20px rgba(99,102,241,.5);display:flex;align-items:center;gap:8px;
     white-space:nowrap;
   `;
-  banner.innerHTML = '📲 Instalar app';
+  banner.innerHTML = 'ðŸ“² Instalar app';
   banner.onclick = () => {
     banner.remove();
     deferredPrompt.prompt();
@@ -1250,18 +1286,18 @@ function showInstallBanner() {
 
 window.addEventListener('appinstalled', () => {
   deferredPrompt = null;
-  console.log('App instalada ✓');
+  console.log('App instalada âœ“');
 });
 
-// ════════════════════════════════════════════════════════════
-// BOT AUTOMÁTICO
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// BOT AUTOMÃTICO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function botAutoReply(leadId, incomingText) {
   const lead = leadsData[leadId];
   if (!lead || !window._demoMode || !lead._simContactId) return;
 
   const lower = incomingText.toLowerCase();
-  const firstName = (lead.name || 'ahí').split(' ')[0];
+  const firstName = (lead.name || 'ahÃ­').split(' ')[0];
   let reply = null, nextStage = null;
 
   if (lead.stage === 'falta_whatsapp') {
@@ -1269,9 +1305,9 @@ function botAutoReply(leadId, incomingText) {
     if (phone) {
       lead.phone = phone;
       nextStage = 'falta_datos';
-      reply = `¡Perfecto, anotado tu número! 😊\n\nPara armar tu presupuesto personalizado necesito:\n\n📅 Fecha tentativa del evento\n👥 Cantidad aproximada de invitados\n🎉 Tipo de evento (boda, 15 años, corporativo...)\n📆 Año`;
+      reply = `Â¡Perfecto, anotado tu nÃºmero! ðŸ˜Š\n\nPara armar tu presupuesto personalizado necesito:\n\nðŸ“… Fecha tentativa del evento\nðŸ‘¥ Cantidad aproximada de invitados\nðŸŽ‰ Tipo de evento (boda, 15 aÃ±os, corporativo...)\nðŸ“† AÃ±o`;
     } else {
-      reply = `¡Hola ${firstName}! 👋 Soy Cristian, fotógrafo de eventos en Buenos Aires.\n\nGracias por escribirme 😊 Para poder enviarte toda la información, ¿me podés contar un poco sobre el evento que tenés en mente?`;
+      reply = `Â¡Hola ${firstName}! ðŸ‘‹ Soy Cristian, fotÃ³grafo de eventos en Buenos Aires.\n\nGracias por escribirme ðŸ˜Š Para poder enviarte toda la informaciÃ³n, Â¿me podÃ©s contar un poco sobre el evento que tenÃ©s en mente?`;
     }
   }
 
@@ -1284,18 +1320,18 @@ function botAutoReply(leadId, incomingText) {
       nextStage = 'presupuesto_enviado';
       reply = buildBudget(lead, evData);
     } else {
-      reply = `¡Hola ${firstName}! 😊 Soy Mel.\n\nPara armar tu presupuesto necesito:\n\n📅 Fecha tentativa del evento\n👥 Cantidad de invitados\n🎉 Tipo de evento (boda, 15 años, corporativo...)\n📆 Año`;
+      reply = `Â¡Hola ${firstName}! ðŸ˜Š Soy Mel.\n\nPara armar tu presupuesto necesito:\n\nðŸ“… Fecha tentativa del evento\nðŸ‘¥ Cantidad de invitados\nðŸŽ‰ Tipo de evento (boda, 15 aÃ±os, corporativo...)\nðŸ“† AÃ±o`;
     }
   }
 
   else if (lead.stage === 'presupuesto_enviado') {
-    if (/gracias|perfecto|ok|bueno|bien|copado|genial|buenísimo|me gust|entendido|recibido|claro|dale|divino|lindo|bárbaro|barbaro/i.test(lower)) {
+    if (/gracias|perfecto|ok|bueno|bien|copado|genial|buenÃ­simo|me gust|entendido|recibido|claro|dale|divino|lindo|bÃ¡rbaro|barbaro/i.test(lower)) {
       nextStage = 'quiere_visitar';
       const slots = generateVisitSlots();
       lead._visitSlots = slots;
-      reply = `¡Nos alegra que te haya gustado! 😊\n\n¿Te gustaría conocer el salón en persona? Tenemos disponible:\n\n1️⃣ ${slots[0].label}\n2️⃣ ${slots[1].label}\n3️⃣ ${slots[2].label}\n\n¿Alguno les viene bien o preferís otro día?`;
+      reply = `Â¡Nos alegra que te haya gustado! ðŸ˜Š\n\nÂ¿Te gustarÃ­a conocer el salÃ³n en persona? Tenemos disponible:\n\n1ï¸âƒ£ ${slots[0].label}\n2ï¸âƒ£ ${slots[1].label}\n3ï¸âƒ£ ${slots[2].label}\n\nÂ¿Alguno les viene bien o preferÃ­s otro dÃ­a?`;
     } else {
-      reply = `¡Recibido! 😊 ¿Surgió alguna consulta sobre el presupuesto?`;
+      reply = `Â¡Recibido! ðŸ˜Š Â¿SurgiÃ³ alguna consulta sobre el presupuesto?`;
     }
   }
 
@@ -1303,26 +1339,26 @@ function botAutoReply(leadId, incomingText) {
     const slots = lead._visitSlots || [];
     let chosen = null;
 
-    // Selección por número (1, 2, 3)
+    // SelecciÃ³n por nÃºmero (1, 2, 3)
     const numM = incomingText.match(/\b([1-3])\b/);
     if (numM && slots[parseInt(numM[1]) - 1]) {
       chosen = slots[parseInt(numM[1]) - 1].label;
     }
-    // Selección por nombre de día que coincida con un slot
+    // SelecciÃ³n por nombre de dÃ­a que coincida con un slot
     if (!chosen) {
       for (const slot of slots) {
         if (lower.includes(slot.day)) { chosen = slot.label; break; }
       }
     }
-    // Fallback: cualquier día mencionado
+    // Fallback: cualquier dÃ­a mencionado
     if (!chosen) chosen = extractVisitDay(incomingText);
 
     if (chosen) {
       nextStage = 'pendiente_visita';
       lead.notes = `Visita pactada: ${chosen}`;
-      reply = `¡Perfecto! 🙌 Quedamos para el ${chosen}.\n\n📍 Av. Gral. Paz 4000, Villa Luzuriaga\n(A 10 min del Acceso Oeste)\n\nLos espera Clarri. ¡Cualquier duda me escribís! 😊`;
+      reply = `Â¡Perfecto! ðŸ™Œ Quedamos para el ${chosen}.\n\nðŸ“ Av. Gral. Paz 4000, Villa Luzuriaga\n(A 10 min del Acceso Oeste)\n\nLos espera Clarri. Â¡Cualquier duda me escribÃ­s! ðŸ˜Š`;
     } else {
-      reply = `¡Cuando quieran! 😊 Podemos recibirlos:\n\n📅 Martes a viernes de 16 a 19hs\n📅 Sábados de 10 a 13hs\n\n¿Qué día les queda mejor?`;
+      reply = `Â¡Cuando quieran! ðŸ˜Š Podemos recibirlos:\n\nðŸ“… Martes a viernes de 16 a 19hs\nðŸ“… SÃ¡bados de 10 a 13hs\n\nÂ¿QuÃ© dÃ­a les queda mejor?`;
     }
   }
 
@@ -1336,7 +1372,7 @@ function sendBotReply(leadId, text, nextStage) {
   if (!lead) return;
 
   if (!window._demoConvs[leadId]) window._demoConvs[leadId] = [];
-  window._demoConvs[leadId].push({ dir:'out', text, who:'🤖 Bot', time:'ahora' });
+  window._demoConvs[leadId].push({ dir:'out', text, who:'ðŸ¤– Bot', time:'ahora' });
 
   if (nextStage) {
     lead.stage = nextStage;
@@ -1350,7 +1386,7 @@ function sendBotReply(leadId, text, nextStage) {
     if (msgList) {
       const d = document.createElement('div');
       d.className = 'msg out';
-      d.innerHTML = `<div class="msg-bubble">${esc(text).replace(/\n/g,'<br>')}</div><div class="msg-meta">🤖 Bot  ahora</div>`;
+      d.innerHTML = `<div class="msg-bubble">${esc(text).replace(/\n/g,'<br>')}</div><div class="msg-meta">ðŸ¤– Bot  ahora</div>`;
       msgList.appendChild(d);
       msgList.scrollTop = msgList.scrollHeight;
     }
@@ -1373,9 +1409,9 @@ function parseEventData(text) {
   const r = { hasData:false, type:null, guests:null, year:null, month:null };
 
   if (/boda|casamiento/.test(lower))             { r.type = 'Boda';        r.hasData = true; }
-  else if (/\b15\b|quince/.test(lower))           { r.type = '15 años';     r.hasData = true; }
+  else if (/\b15\b|quince/.test(lower))           { r.type = '15 aÃ±os';     r.hasData = true; }
   else if (/corporativo|empresa|laboral/.test(lower)){ r.type = 'Corporativo'; r.hasData = true; }
-  else if (/cumple/.test(lower))                  { r.type = 'Cumpleaños';  r.hasData = true; }
+  else if (/cumple/.test(lower))                  { r.type = 'CumpleaÃ±os';  r.hasData = true; }
 
   // Guests: primero buscar con contexto, luego sin fechas
   const ctxM = text.match(/(\d+)\s*(invitados?|personas?|pax)/i);
@@ -1404,38 +1440,38 @@ function parseEventData(text) {
 
 function buildBudget(lead, evData) {
   const name   = (lead.name || '').split(' ')[0];
-  const salon  = lead.salon || 'el salón';
+  const salon  = lead.salon || 'el salÃ³n';
   const type   = evData.type   || lead.eventType || 'Evento';
   const year   = evData.year   || lead.eventYear  || (new Date().getFullYear() + 1);
   const guests = evData.guests || lead.guests      || 150;
   const fecha  = evData.month  ? `${evData.month} ${year}` : String(year);
   const cap    = (Math.ceil(guests / 50) * 50) + 50;
-  const ppp    = type === 'Boda' ? 320000 : type === '15 años' ? 285000 : 260000;
+  const ppp    = type === 'Boda' ? 320000 : type === '15 aÃ±os' ? 285000 : 260000;
   const total  = (ppp * guests).toLocaleString('es-AR');
   const sena   = Math.round(ppp * guests * 0.3 / 1000) * 1000;
 
-  return `¡Hola ${name}! 🎉 Acá te enviamos el presupuesto para tu ${type}:\n\n` +
-    `🏛 ${salon.toUpperCase()}\n` +
-    `📅 ${type} · ${fecha} · ${guests} invitados aprox.\n\n` +
-    `📋 PAQUETE INCLUYE:\n` +
-    `✅ Salón con capacidad para ${cap} personas\n` +
-    `✅ Ambientación y decoración base\n` +
-    `✅ Catering completo (entrada, principal, postre y café)\n` +
-    `✅ Barra libre 6 horas\n` +
-    `✅ Personal de servicio\n` +
-    `✅ Coordinador de evento\n` +
-    `✅ Mantelería y sillas tiffany\n` +
-    `✅ Iluminación decorativa\n\n` +
-    `💰 INVERSIÓN:\n` +
+  return `Â¡Hola ${name}! ðŸŽ‰ AcÃ¡ te enviamos el presupuesto para tu ${type}:\n\n` +
+    `ðŸ› ${salon.toUpperCase()}\n` +
+    `ðŸ“… ${type} Â· ${fecha} Â· ${guests} invitados aprox.\n\n` +
+    `ðŸ“‹ PAQUETE INCLUYE:\n` +
+    `âœ… SalÃ³n con capacidad para ${cap} personas\n` +
+    `âœ… AmbientaciÃ³n y decoraciÃ³n base\n` +
+    `âœ… Catering completo (entrada, principal, postre y cafÃ©)\n` +
+    `âœ… Barra libre 6 horas\n` +
+    `âœ… Personal de servicio\n` +
+    `âœ… Coordinador de evento\n` +
+    `âœ… MantelerÃ­a y sillas tiffany\n` +
+    `âœ… IluminaciÃ³n decorativa\n\n` +
+    `ðŸ’° INVERSIÃ“N:\n` +
     `$${ppp.toLocaleString('es-AR')} por persona + IVA\n` +
     `Total estimado: $${total} + IVA\n` +
-    `Seña para reservar (30%): $${sena.toLocaleString('es-AR')}\n\n` +
-    `❌ No incluye: DJ/banda, flores extra, torta, cotillón\n\n` +
-    `¡Quedamos a disposición para cualquier consulta! 😊`;
+    `SeÃ±a para reservar (30%): $${sena.toLocaleString('es-AR')}\n\n` +
+    `âŒ No incluye: DJ/banda, flores extra, torta, cotillÃ³n\n\n` +
+    `Â¡Quedamos a disposiciÃ³n para cualquier consulta! ðŸ˜Š`;
 }
 
 function generateVisitSlots() {
-  const dayNames = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const dayNames = ['domingo','lunes','martes','miÃ©rcoles','jueves','viernes','sÃ¡bado'];
   const available = { 2:'17hs', 3:'17hs', 4:'16hs', 5:'17hs', 6:'11hs' };
   const slots = [];
   const d = new Date();
@@ -1452,7 +1488,7 @@ function generateVisitSlots() {
 }
 
 function extractVisitDay(text) {
-  const days = ['lunes','martes','miércoles','miercoles','jueves','viernes','sábado','sabado','domingo'];
+  const days = ['lunes','martes','miÃ©rcoles','miercoles','jueves','viernes','sÃ¡bado','sabado','domingo'];
   const lower = text.toLowerCase();
   for (const d of days) {
     if (lower.includes(d)) {
@@ -1465,9 +1501,9 @@ function extractVisitDay(text) {
   return dateM ? dateM[0] : null;
 }
 
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // SIMULATOR (BroadcastChannel)
-// ════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function initSimulator() {
   if (!('BroadcastChannel' in window)) return;
   window._simCh = new BroadcastChannel('crm_inbox');
@@ -1519,8 +1555,616 @@ function receiveSimMessage({ channel, contactId, contactName, text }) {
   }
 
   // Toast notification
-  const icon = (channel === 'ig' || channel === 'instagram') ? '📸' : '📱';
-  showSimToast(`${icon} ${contactName || contactId}: ${text.slice(0, 40)}${text.length > 40 ? '…' : ''}`);
+  const icon = (channel === 'ig' || channel === 'instagram') ? 'ðŸ“¸' : 'ðŸ“±';
+  showSimToast(`${icon} ${contactName || contactId}: ${text.slice(0, 40)}${text.length > 40 ? 'â€¦' : ''}`);
+
+  // Trigger bot
+  botAutoReply(lead.id, text);
+}
+
+function showSimToast(msg) {
+  const t = document.getElementById('simToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+function checkAdminAccess(name) {
+  if (ADMIN_NAMES.includes(name)) {
+    document.getElementById('btnAdmin').style.display = 'flex';
+  }
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” OPEN / CLOSE / TABS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+let adminCurrentTab = 'stages';
+
+function openAdmin() {
+  document.getElementById('adminModal').classList.add('open');
+  switchAdminTab('stages');
+}
+
+function closeAdmin() {
+  document.getElementById('adminModal').classList.remove('open');
+}
+
+document.getElementById('adminModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('adminModal')) closeAdmin();
+});
+
+function switchAdminTab(tab) {
+  adminCurrentTab = tab;
+  document.querySelectorAll('.admin-tab').forEach((btn, i) => {
+    btn.classList.toggle('active', ['stages','templates','users'][i] === tab);
+  });
+  const body = document.getElementById('adminBody');
+  if (tab === 'stages')    renderStagesAdmin(body);
+  if (tab === 'templates') renderTemplatesAdmin(body);
+  if (tab === 'users')     renderUsersAdmin(body);
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” ETAPAS DEL FLUJO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function renderStagesAdmin(body) {
+  const stages = [...STAGES];
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">
+      DefinÃ­ las etapas del pipeline. El orden aquÃ­ determina el orden en el tablero.
+    </p>
+    <div id="stageAdminList"></div>
+    <button class="btn-add-stage" onclick="adminAddStage()">+ Nueva etapa</button>
+    <button class="admin-save" onclick="adminSaveStages()">ðŸ’¾ Guardar cambios</button>
+  `;
+  renderStageAdminList(stages);
+}
+
+function renderStageAdminList(stages) {
+  const list = document.getElementById('stageAdminList');
+  list.innerHTML = stages.map((s, i) => `
+    <div class="stage-row" data-idx="${i}">
+      <div class="stage-row-dot" style="background:${s.color};border-color:${s.color}" title="Color"></div>
+      <input class="stage-row-color" type="color" value="${s.color}"
+        oninput="adminUpdateStageColor(${i}, this.value)" title="Cambiar color"/>
+      <input class="stage-row-name" value="${esc(s.label)}" placeholder="Nombre de la etapa"
+        oninput="adminUpdateStageName(${i}, this.value)"/>
+      <button class="stage-move" onclick="adminMoveStage(${i},-1)" ${i===0?'disabled style=opacity:.2':''}>â†‘</button>
+      <button class="stage-move" onclick="adminMoveStage(${i},1)" ${i===stages.length-1?'disabled style=opacity:.2':''}>â†“</button>
+      <button class="stage-del" onclick="adminDeleteStage(${i})" title="Eliminar">âœ•</button>
+    </div>
+  `).join('');
+}
+
+// Estado temporal del editor de etapas
+let _editStages = null;
+
+function getEditStages() {
+  if (!_editStages) _editStages = [...STAGES];
+  return _editStages;
+}
+
+function adminUpdateStageName(i, val) { getEditStages()[i].label = val; }
+function adminUpdateStageColor(i, val) {
+  const s = getEditStages();
+  s[i].color = val;
+  const rows = document.querySelectorAll('.stage-row');
+  if (rows[i]) rows[i].querySelector('.stage-row-dot').style.background = val;
+}
+
+function adminAddStage() {
+  const s = getEditStages();
+  s.push({ id: 'etapa_' + Date.now(), label: 'Nueva etapa', color: '#6366f1' });
+  renderStageAdminList(s);
+}
+
+function adminDeleteStage(i) {
+  const s = getEditStages();
+  if (s.length <= 2) { alert('Debe haber al menos 2 etapas'); return; }
+  if (!confirm(`Â¿Eliminar "${s[i].label}"?`)) return;
+  s.splice(i, 1);
+  renderStageAdminList(s);
+}
+
+function adminMoveStage(i, dir) {
+  const s = getEditStages();
+  const j = i + dir;
+  if (j < 0 || j >= s.length) return;
+  [s[i], s[j]] = [s[j], s[i]];
+  renderStageAdminList(s);
+}
+
+function adminSaveStages() {
+  const s = getEditStages();
+  // Sincronizar nombres desde inputs (por si no se disparÃ³ oninput)
+  document.querySelectorAll('.stage-row').forEach((row, i) => {
+    const inp = row.querySelector('.stage-row-name');
+    if (inp) s[i].label = inp.value.trim() || s[i].label;
+  });
+  STAGES.length = 0;
+  s.forEach(st => STAGES.push(st));
+  saveStages(STAGES);
+  _editStages = null;
+  renderKanban();
+  renderCards();
+  buildStageSelect('newStage');
+  closeAdmin();
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” PLANTILLAS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function renderTemplatesAdmin(body) {
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">
+      EditÃ¡ las plantillas de mensajes por categorÃ­a.
+    </p>
+    <div id="tplAdminList"></div>
+    <button class="btn-add-stage" onclick="adminAddTplCat()">+ Nueva categorÃ­a</button>
+    <button class="admin-save" onclick="adminSaveTemplates()">ðŸ’¾ Guardar plantillas</button>
+  `;
+  renderTplAdminList();
+}
+
+function renderTplAdminList() {
+  const list = document.getElementById('tplAdminList');
+  list.innerHTML = TEMPLATES.map((cat, ci) => `
+    <div style="margin-bottom:16px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px">
+      <div class="tpl-admin-cat">
+        <span style="font-size:16px">ðŸ“</span>
+        <input value="${esc(cat.cat)}" placeholder="CategorÃ­a"
+          oninput="TEMPLATES[${ci}].cat=this.value"
+          style="font-weight:700;font-size:13px;background:transparent;border:none;color:var(--text);outline:none;flex:1;border-bottom:1px solid var(--border)"/>
+        <button class="stage-del" onclick="adminDeleteTplCat(${ci})" title="Eliminar categorÃ­a">âœ•</button>
+      </div>
+      ${cat.items.map((t, ti) => `
+        <div class="tpl-admin-row">
+          <input value="${esc(t.title)}" placeholder="TÃ­tulo" oninput="TEMPLATES[${ci}].items[${ti}].title=this.value"/>
+          <textarea placeholder="Texto del mensaje" oninput="TEMPLATES[${ci}].items[${ti}].text=this.value">${esc(t.text)}</textarea>
+          <button class="stage-del" onclick="adminDeleteTpl(${ci},${ti})">âœ•</button>
+        </div>
+      `).join('')}
+      <button class="btn-add-stage" style="margin-top:6px" onclick="adminAddTplItem(${ci})">+ Agregar mensaje</button>
+    </div>
+  `).join('');
+}
+
+function adminAddTplCat() {
+  TEMPLATES.push({ cat: 'Nueva categorÃ­a', items: [] });
+  renderTplAdminList();
+}
+
+function adminDeleteTplCat(ci) {
+  if (!confirm('Â¿Eliminar esta categorÃ­a y todos sus mensajes?')) return;
+  TEMPLATES.splice(ci, 1);
+  renderTplAdminList();
+}
+
+function adminAddTplItem(ci) {
+  TEMPLATES[ci].items.push({ title: 'Nuevo mensaje', text: '' });
+  renderTplAdminList();
+}
+
+function adminDeleteTpl(ci, ti) {
+  TEMPLATES[ci].items.splice(ti, 1);
+  renderTplAdminList();
+}
+
+function adminSaveTemplates() {
+  saveTemplates(TEMPLATES);
+  buildTemplates();
+  closeAdmin();
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ADMIN â€” USUARIOS
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function renderUsersAdmin(body) {
+  const users = loadUsers() || DEMO_USERS;
+  body.innerHTML = `
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">
+      Usuarios con acceso al CRM. La contraseÃ±a se muestra solo en modo demo.
+    </p>
+    <div id="userAdminList"></div>
+    <button class="btn-add-stage" onclick="adminAddUser()">+ Agregar usuario</button>
+    <button class="admin-save" onclick="adminSaveUsers()">ðŸ’¾ Guardar usuarios</button>
+  `;
+  renderUserAdminList(users);
+}
+
+function renderUserAdminList(users) {
+  const list = document.getElementById('userAdminList');
+  list.innerHTML = users.map((u, i) => `
+    <div class="user-row">
+      <div class="user-avatar">${u.name.charAt(0).toUpperCase()}</div>
+      <div class="user-info-col">
+        <div style="display:flex;gap:8px;margin-bottom:4px">
+          <input value="${esc(u.name)}" placeholder="Nombre"
+            oninput="adminUpdateUser(${i},'name',this.value)"
+            style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:13px;font-family:inherit;outline:none;width:110px"/>
+          <input value="${esc(u.email)}" placeholder="Email"
+            oninput="adminUpdateUser(${i},'email',this.value)"
+            style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-size:12px;font-family:inherit;outline:none;flex:1"/>
+        </div>
+        <input value="${esc(u.pass)}" placeholder="ContraseÃ±a" type="text"
+          oninput="adminUpdateUser(${i},'pass',this.value)"
+          style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--muted);font-size:12px;font-family:inherit;outline:none;width:100%"/>
+      </div>
+      <button class="stage-del" onclick="adminDeleteUser(${i})" title="Eliminar">âœ•</button>
+    </div>
+  `).join('');
+}
+
+let _editUsers = null;
+function getEditUsers() {
+  if (!_editUsers) _editUsers = (loadUsers() || DEMO_USERS).map(u => ({...u}));
+  return _editUsers;
+}
+function adminUpdateUser(i, field, val) { getEditUsers()[i][field] = val; }
+function adminAddUser() {
+  getEditUsers().push({ name: 'Nuevo', email: 'nuevo@crm.com', pass: 'crm1234' });
+  renderUserAdminList(getEditUsers());
+}
+function adminDeleteUser(i) {
+  const u = getEditUsers();
+  if (u.length <= 1) { alert('Debe haber al menos 1 usuario'); return; }
+  u.splice(i, 1);
+  renderUserAdminList(u);
+}
+function adminSaveUsers() {
+  const u = getEditUsers();
+  // Sync DEMO_USERS
+  DEMO_USERS.length = 0;
+  u.forEach(usr => DEMO_USERS.push(usr));
+  saveUsers(u);
+  _editUsers = null;
+  closeAdmin();
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// INIT
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// Ajusta app y panel al visual viewport real (maneja teclado en iOS/Android)
+function setAppHeight() {
+  const vv  = window.visualViewport;
+  const h   = vv ? vv.height : window.innerHeight;
+  const top = vv ? vv.offsetTop : 0;
+  document.getElementById('app').style.height = h + 'px';
+  document.getElementById('loginScreen').style.height = h + 'px';
+  const panel = document.getElementById('leadPanel');
+  if (panel) {
+    panel.style.top    = top + 'px';
+    panel.style.height = h + 'px';
+    panel.style.bottom = 'auto';
+  }
+}
+setAppHeight();
+window.addEventListener('resize', setAppHeight);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', setAppHeight);
+  window.visualViewport.addEventListener('scroll', setAppHeight);
+}
+// Reset zoom de iOS (Safari hace auto-zoom en inputs con font-size < 16px)
+function resetZoom(){
+  const vp = document.querySelector('meta[name="viewport"]');
+  vp.content = 'width=device-width,initial-scale=1,maximum-scale=1';
+  setTimeout(()=>{ vp.content = 'width=device-width,initial-scale=1'; }, 300);
+}
+
+initFirebase();
+
+// â”€â”€ PWA Service Worker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('SW registrado:', r.scope))
+      .catch(e => console.warn('SW error:', e));
+  });
+}
+
+// â”€â”€ Prompt de instalaciÃ³n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  if (document.getElementById('installBanner')) return;
+  const banner = document.createElement('div');
+  banner.id = 'installBanner';
+  banner.style.cssText = `
+    position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+    background:#6366f1;color:#fff;padding:10px 20px;border-radius:24px;
+    font-size:13px;font-weight:600;cursor:pointer;z-index:1000;
+    box-shadow:0 4px 20px rgba(99,102,241,.5);display:flex;align-items:center;gap:8px;
+    white-space:nowrap;
+  `;
+  banner.innerHTML = 'ðŸ“² Instalar app';
+  banner.onclick = () => {
+    banner.remove();
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+  };
+  document.body.appendChild(banner);
+  setTimeout(() => banner.remove(), 8000);
+}
+
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  console.log('App instalada âœ“');
+});
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// BOT AUTOMÃTICO
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function botAutoReply(leadId, incomingText) {
+  const lead = leadsData[leadId];
+  if (!lead || !window._demoMode || !lead._simContactId) return;
+
+  const lower = incomingText.toLowerCase();
+  const firstName = (lead.name || 'ahÃ­').split(' ')[0];
+  let reply = null, nextStage = null;
+
+  if (lead.stage === 'falta_whatsapp') {
+    const phone = extractPhone(incomingText);
+    if (phone) {
+      lead.phone = phone;
+      nextStage = 'falta_datos';
+      reply = `Â¡Perfecto, anotado tu nÃºmero! ðŸ˜Š\n\nPara armar tu presupuesto personalizado necesito:\n\nðŸ“… Fecha tentativa del evento\nðŸ‘¥ Cantidad aproximada de invitados\nðŸŽ‰ Tipo de evento (boda, 15 aÃ±os, corporativo...)\nðŸ“† AÃ±o`;
+    } else {
+      reply = `Â¡Hola ${firstName}! ðŸ‘‹ Soy Mel, ejecutiva de cuenta del Palacio Nijash.\n\nGracias por escribirnos ðŸ˜Š Para poder ayudarte mejor y enviarte toda la informaciÃ³n, Â¿me podÃ©s compartir tu nÃºmero de WhatsApp?`;
+    }
+  }
+
+  else if (lead.stage === 'falta_datos') {
+    const evData = parseEventData(incomingText);
+    if (evData.hasData) {
+      if (evData.type)   lead.eventType = evData.type;
+      if (evData.guests) lead.guests    = evData.guests;
+      if (evData.year)   lead.eventYear = String(evData.year);
+      nextStage = 'presupuesto_enviado';
+      reply = buildBudget(lead, evData);
+    } else {
+      reply = `Â¡Hola ${firstName}! ðŸ˜Š Soy Mel.\n\nPara armar tu presupuesto necesito:\n\nðŸ“… Fecha tentativa del evento\nðŸ‘¥ Cantidad de invitados\nðŸŽ‰ Tipo de evento (boda, 15 aÃ±os, corporativo...)\nðŸ“† AÃ±o`;
+    }
+  }
+
+  else if (lead.stage === 'presupuesto_enviado') {
+    if (/gracias|perfecto|ok|bueno|bien|copado|genial|buenÃ­simo|me gust|entendido|recibido|claro|dale|divino|lindo|bÃ¡rbaro|barbaro/i.test(lower)) {
+      nextStage = 'quiere_visitar';
+      const slots = generateVisitSlots();
+      lead._visitSlots = slots;
+      reply = `Â¡Nos alegra que te haya gustado! ðŸ˜Š\n\nÂ¿Te gustarÃ­a conocer el salÃ³n en persona? Tenemos disponible:\n\n1ï¸âƒ£ ${slots[0].label}\n2ï¸âƒ£ ${slots[1].label}\n3ï¸âƒ£ ${slots[2].label}\n\nÂ¿Alguno les viene bien o preferÃ­s otro dÃ­a?`;
+    } else {
+      reply = `Â¡Recibido! ðŸ˜Š Â¿SurgiÃ³ alguna consulta sobre el presupuesto?`;
+    }
+  }
+
+  else if (lead.stage === 'quiere_visitar') {
+    const slots = lead._visitSlots || [];
+    let chosen = null;
+
+    // SelecciÃ³n por nÃºmero (1, 2, 3)
+    const numM = incomingText.match(/\b([1-3])\b/);
+    if (numM && slots[parseInt(numM[1]) - 1]) {
+      chosen = slots[parseInt(numM[1]) - 1].label;
+    }
+    // SelecciÃ³n por nombre de dÃ­a que coincida con un slot
+    if (!chosen) {
+      for (const slot of slots) {
+        if (lower.includes(slot.day)) { chosen = slot.label; break; }
+      }
+    }
+    // Fallback: cualquier dÃ­a mencionado
+    if (!chosen) chosen = extractVisitDay(incomingText);
+
+    if (chosen) {
+      nextStage = 'pendiente_visita';
+      lead.notes = `Visita pactada: ${chosen}`;
+      reply = `Â¡Perfecto! ðŸ™Œ Quedamos para el ${chosen}.\n\nðŸ“ Av. Gral. Paz 4000, Villa Luzuriaga\n(A 10 min del Acceso Oeste)\n\nLos espera Clarri. Â¡Cualquier duda me escribÃ­s! ðŸ˜Š`;
+    } else {
+      reply = `Â¡Cuando quieran! ðŸ˜Š Podemos recibirlos:\n\nðŸ“… Martes a viernes de 16 a 19hs\nðŸ“… SÃ¡bados de 10 a 13hs\n\nÂ¿QuÃ© dÃ­a les queda mejor?`;
+    }
+  }
+
+  if (reply) {
+    setTimeout(() => sendBotReply(leadId, reply, nextStage), 1300 + Math.random() * 700);
+  }
+}
+
+function sendBotReply(leadId, text, nextStage) {
+  const lead = leadsData[leadId];
+  if (!lead) return;
+
+  if (!window._demoConvs[leadId]) window._demoConvs[leadId] = [];
+  window._demoConvs[leadId].push({ dir:'out', text, who:'ðŸ¤– Bot', time:'ahora' });
+
+  if (nextStage) {
+    lead.stage = nextStage;
+    lead.updatedAt = { toDate: () => new Date() };
+  }
+  lead.lastMessage = text.split('\n')[0].slice(0, 80);
+  renderCards();
+
+  if (currentLeadId === leadId) {
+    const msgList = document.getElementById('msgList');
+    if (msgList) {
+      const d = document.createElement('div');
+      d.className = 'msg out';
+      d.innerHTML = `<div class="msg-bubble">${esc(text).replace(/\n/g,'<br>')}</div><div class="msg-meta">ðŸ¤– Bot  ahora</div>`;
+      msgList.appendChild(d);
+      msgList.scrollTop = msgList.scrollHeight;
+    }
+  }
+
+  if (window._simCh && lead._simContactId) {
+    window._simCh.postMessage({ type:'crm_reply', to:lead._simContactId, text, author:'Mel (Bot)' });
+  }
+}
+
+function extractPhone(text) {
+  const m = text.match(/(\+?[\d][\d\s\-\(\)]{6,})/);
+  if (!m) return null;
+  const digits = m[1].replace(/\D/g, '');
+  return digits.length >= 8 ? digits : null;
+}
+
+function parseEventData(text) {
+  const lower = text.toLowerCase();
+  const r = { hasData:false, type:null, guests:null, year:null, month:null };
+
+  if (/boda|casamiento/.test(lower))             { r.type = 'Boda';        r.hasData = true; }
+  else if (/\b15\b|quince/.test(lower))           { r.type = '15 aÃ±os';     r.hasData = true; }
+  else if (/corporativo|empresa|laboral/.test(lower)){ r.type = 'Corporativo'; r.hasData = true; }
+  else if (/cumple/.test(lower))                  { r.type = 'CumpleaÃ±os';  r.hasData = true; }
+
+  // Guests: primero buscar con contexto, luego sin fechas
+  const ctxM = text.match(/(\d+)\s*(invitados?|personas?|pax)/i);
+  if (ctxM) {
+    r.guests = parseInt(ctxM[1]); r.hasData = true;
+  } else {
+    const clean = text
+      .replace(/\d{1,2}\s+de\s+\w+/gi, '')
+      .replace(/\d{1,2}[\/\-]\d{1,2}([\/\-]\d{2,4})?/g, '')
+      .replace(/\b(202[5-9]|203\d)\b/g, '');
+    const gm = clean.match(/\b(\d{2,3})\b/);
+    if (gm) { r.guests = parseInt(gm[1]); r.hasData = true; }
+  }
+
+  const ym = text.match(/\b(202[5-9]|203\d)\b/);
+  if (ym) { r.year = parseInt(ym[1]); r.hasData = true; }
+
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio',
+                  'agosto','septiembre','octubre','noviembre','diciembre'];
+  for (const m of months) {
+    if (lower.includes(m)) { r.month = m; r.hasData = true; break; }
+  }
+
+  return r;
+}
+
+function buildBudget(lead, evData) {
+  const name   = (lead.name || '').split(' ')[0];
+  const salon  = lead.salon === 'complejo' ? 'Complejo New Cubix' : 'Palacio Nijash';
+  const type   = evData.type   || lead.eventType || 'Evento';
+  const year   = evData.year   || lead.eventYear  || (new Date().getFullYear() + 1);
+  const guests = evData.guests || lead.guests      || 150;
+  const fecha  = evData.month  ? `${evData.month} ${year}` : String(year);
+  const cap    = (Math.ceil(guests / 50) * 50) + 50;
+  const ppp    = type === 'Boda' ? 320000 : type === '15 aÃ±os' ? 285000 : 260000;
+  const total  = (ppp * guests).toLocaleString('es-AR');
+  const sena   = Math.round(ppp * guests * 0.3 / 1000) * 1000;
+
+  return `Â¡Hola ${name}! ðŸŽ‰ AcÃ¡ te enviamos el presupuesto para tu ${type}:\n\n` +
+    `ðŸ› ${salon.toUpperCase()}\n` +
+    `ðŸ“… ${type} Â· ${fecha} Â· ${guests} invitados aprox.\n\n` +
+    `ðŸ“‹ PAQUETE INCLUYE:\n` +
+    `âœ… SalÃ³n con capacidad para ${cap} personas\n` +
+    `âœ… AmbientaciÃ³n y decoraciÃ³n base\n` +
+    `âœ… Catering completo (entrada, principal, postre y cafÃ©)\n` +
+    `âœ… Barra libre 6 horas\n` +
+    `âœ… Personal de servicio\n` +
+    `âœ… Coordinador de evento\n` +
+    `âœ… MantelerÃ­a y sillas tiffany\n` +
+    `âœ… IluminaciÃ³n decorativa\n\n` +
+    `ðŸ’° INVERSIÃ“N:\n` +
+    `$${ppp.toLocaleString('es-AR')} por persona + IVA\n` +
+    `Total estimado: $${total} + IVA\n` +
+    `SeÃ±a para reservar (30%): $${sena.toLocaleString('es-AR')}\n\n` +
+    `âŒ No incluye: DJ/banda, flores extra, torta, cotillÃ³n\n\n` +
+    `Â¡Quedamos a disposiciÃ³n para cualquier consulta! ðŸ˜Š`;
+}
+
+function generateVisitSlots() {
+  const dayNames = ['domingo','lunes','martes','miÃ©rcoles','jueves','viernes','sÃ¡bado'];
+  const available = { 2:'17hs', 3:'17hs', 4:'16hs', 5:'17hs', 6:'11hs' };
+  const slots = [];
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  while (slots.length < 3) {
+    const dow = d.getDay();
+    if (available[dow]) {
+      const label = `${dayNames[dow]} ${d.getDate()}/${d.getMonth()+1} a las ${available[dow]}`;
+      slots.push({ day: dayNames[dow], label });
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return slots;
+}
+
+function extractVisitDay(text) {
+  const days = ['lunes','martes','miÃ©rcoles','miercoles','jueves','viernes','sÃ¡bado','sabado','domingo'];
+  const lower = text.toLowerCase();
+  for (const d of days) {
+    if (lower.includes(d)) {
+      const timeM = text.match(/\b(\d{1,2})[:\.](\d{2})\s*h[s]?|\b(\d{1,2})\s*h[s]?\b/i);
+      const timeStr = timeM ? ` a las ${timeM[0]}` : '';
+      return d + timeStr;
+    }
+  }
+  const dateM = text.match(/\d{1,2}\s+de\s+\w+/i);
+  return dateM ? dateM[0] : null;
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// SIMULATOR (BroadcastChannel)
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+function initSimulator() {
+  if (!('BroadcastChannel' in window)) return;
+  window._simCh = new BroadcastChannel('crm_inbox');
+  window._simCh.addEventListener('message', e => {
+    if (e.data.type === 'sim_message') receiveSimMessage(e.data);
+  });
+}
+
+function receiveSimMessage({ channel, contactId, contactName, text }) {
+  if (!window._demoMode) return;
+
+  // Find existing sim lead
+  let lead = Object.values(leadsData).find(l => l._simContactId === contactId);
+
+  if (!lead) {
+    const isIg = channel === 'instagram' || channel === 'ig';
+    const id = 'sim_' + Date.now();
+    lead = {
+      id, salon: currentSalon,
+      name: contactName || contactId,
+      phone: isIg ? '' : contactId,
+      source: isIg ? 'instagram' : 'whatsapp',
+      stage: isIg ? 'falta_whatsapp' : 'falta_datos',
+      assignedTo: '', guests: 0, notes: '',
+      lastMessage: text,
+      updatedAt: { toDate: () => new Date() },
+      _simContactId: contactId
+    };
+    leadsData[id] = lead;
+    window._demoConvs[id] = [];
+  } else {
+    lead.lastMessage = text;
+    lead.updatedAt = { toDate: () => new Date() };
+  }
+
+  window._demoConvs[lead.id].push({ dir:'in', text, time:'ahora' });
+  renderCards();
+
+  // If panel open for this lead, append bubble live
+  if (currentLeadId === lead.id) {
+    const msgList = document.getElementById('msgList');
+    if (msgList) {
+      const d = document.createElement('div');
+      d.className = 'msg in';
+      d.innerHTML = `<div class="msg-bubble">${esc(text)}</div><div class="msg-meta">ahora</div>`;
+      msgList.appendChild(d);
+      msgList.scrollTop = msgList.scrollHeight;
+    }
+  }
+
+  // Toast notification
+  const icon = (channel === 'ig' || channel === 'instagram') ? 'ðŸ“¸' : 'ðŸ“±';
+  showSimToast(`${icon} ${contactName || contactId}: ${text.slice(0, 40)}${text.length > 40 ? 'â€¦' : ''}`);
 
   // Trigger bot
   botAutoReply(lead.id, text);
@@ -1535,4 +2179,3 @@ function showSimToast(msg) {
 }
 </script>
 </body>
-</html>
