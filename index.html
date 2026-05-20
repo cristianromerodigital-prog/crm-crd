@@ -317,8 +317,8 @@ select.info-input option{background:#fff}
 <div id="app">
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
-      <span style="font-size:16px;font-weight:800;color:var(--accent)">NIJASH</span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">CRM · EVENTOS</span>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V1.6</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -1325,11 +1325,8 @@ document.getElementById('addLeadModal').addEventListener('click', e => {
 // ════════════════════════════════════════════════════════════
 // DEMO MODE (Firebase no configurado)
 // ════════════════════════════════════════════════════════════
+const _msgCbs = {};
 function initDemoMode() {
-  window._demoMode = true;
-  // No ocultamos el login — el usuario ingresa con las credenciales demo
-
-  // Datos demo
   const now = { toDate: () => new Date(), seconds: Date.now()/1000 };
   const ago = (h) => ({ toDate: () => new Date(Date.now() - h*3600000), seconds: (Date.now() - h*3600000)/1000 });
 
@@ -1402,9 +1399,46 @@ function initDemoMode() {
       { dir:'in',  text:'Gracias, lo vemos con mi novio y te avisamos 💍', time:'hace 5 días' },
     ],
   };
+  db = {
+    collection: () => ({
+      where: (field, op, val) => ({
+        onSnapshot: (cb) => {
+          const all = Object.values(leadsData);
+          const filtered = (val === 'todos') ? all : all.filter(l => l[field] === val);
+          cb({ docChanges: () => filtered.map(d => ({ type:'added', doc:{ id:d.id, data:()=>({...d}) } })) });
+          return () => {};
+        }
+      }),
+      doc: (id) => ({
+        collection: (sub) => {
+          if (sub === 'messages') return {
+            orderBy: () => ({
+              onSnapshot: (cb) => {
+                if (!window._demoConvs[id]) window._demoConvs[id] = [];
+                _msgCbs[id] = cb;
+                cb({ docChanges: () => (window._demoConvs[id]||[]).map((m,i) => ({ type:'added', doc:{ id:'m'+i, data:()=>({ text:m.text, direction:m.dir, author:m.who||'', createdAt:{ toDate:()=>new Date() }, channel:'demo' }) } })) });
+                return () => { delete _msgCbs[id]; };
+              }
+            }),
+            add: async (data) => {
+              if (!window._demoConvs[id]) window._demoConvs[id] = [];
+              window._demoConvs[id].push({ text:data.text, dir:data.direction, who:data.author, time:'ahora' });
+              if (_msgCbs[id]) _msgCbs[id]({ docChanges: () => [{ type:'added', doc:{ id:'m'+Date.now(), data:()=>({...data, createdAt:{ toDate:()=>new Date() }}) } }] });
+            }
+          };
+          return { orderBy: () => ({ onSnapshot: (cb) => { cb({ docChanges: () => [] }); return () => {}; } }), add: async () => {} };
+        },
+        update: async (data) => { if (leadsData[id]) Object.assign(leadsData[id], data); renderCards(); }
+      }),
+      add: async (data) => {
+        const newId = 'new_' + Date.now();
+        leadsData[newId] = { id:newId, ...data, updatedAt:now };
+        renderCards();
+        return { id:newId };
+      }
+    })
+  };
   auth = { currentUser: { email: 'cristian@crd.com' }, signOut: async () => {} };
-
-  // En demo, openLead usa datos locales
   window._demoMode = true;
 }
 
@@ -1816,7 +1850,7 @@ function botAutoReply(leadId, incomingText) {
       nextStage = 'falta_datos';
       reply = `¡Perfecto, anotado tu número! 😊\n\nPara armar tu presupuesto personalizado necesito:\n\n📅 Fecha tentativa del evento\n👥 Cantidad aproximada de invitados\n🎉 Tipo de evento (boda, 15 años, corporativo...)\n📆 Año`;
     } else {
-      reply = `¡Hola ${firstName}! 👋 Soy Mel, ejecutiva de cuenta del Palacio Nijash.\n\nGracias por escribirnos 😊 Para poder ayudarte mejor y enviarte toda la información, ¿me podés compartir tu número de WhatsApp?`;
+      reply = `¡Hola ${firstName}! 👋 Soy Cristian, fotógrafo de eventos en Buenos Aires.\n\nGracias por escribirme 😊 ¿Me contás un poco sobre el evento que tenés en mente?`;
     }
   }
 
@@ -1949,7 +1983,7 @@ function parseEventData(text) {
 
 function buildBudget(lead, evData) {
   const name   = (lead.name || '').split(' ')[0];
-  const salon  = lead.salon === 'complejo' ? 'Complejo New Cubix' : 'Palacio Nijash';
+  const salon  = lead.salon || 'el salón';
   const type   = evData.type   || lead.eventType || 'Evento';
   const year   = evData.year   || lead.eventYear  || (new Date().getFullYear() + 1);
   const guests = evData.guests || lead.guests      || 150;
