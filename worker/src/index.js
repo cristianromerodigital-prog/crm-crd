@@ -50,7 +50,6 @@ function buildSystemPrompt(lead) {
 
   const missing = FIELDS.filter(f => {
     if (collected[f]) return false;
-    if (f === 'pre_service'  && !isBoV)   return false;
     if (f === 'honoree_name' && !isQuince) return false;
     if (f === 'couple_names' && !isBoda)   return false;
     return true;
