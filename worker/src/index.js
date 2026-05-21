@@ -177,6 +177,17 @@ async function callOpenAI(env, messages) {
   return data.choices?.[0]?.message?.content || '';
 }
 
+async function resolvePhone(waJid) {
+  try {
+    const res = await fetch(`${BRIDGE_URL}/api/resolve-phone?jid=${encodeURIComponent(waJid)}`, {
+      signal: AbortSignal.timeout(4000),
+    });
+    if (!res.ok) return '';
+    const data = await res.json();
+    return data.phone || '';
+  } catch (_) { return ''; }
+}
+
 async function sendWA(waJid, message, mediaUrl = null, filename = null) {
   try {
     const body = { recipient: waJid, message };
@@ -401,15 +412,21 @@ export default {
 
       // Buscar o crear lead por waJid
       let lead = await env.DB.prepare('SELECT * FROM leads WHERE wa_jid = ? LIMIT 1').bind(waJid).first();
+      // Resolver teléfono real desde whatsmeow_lid_map (necesario para JIDs @lid)
+      let resolvedPhone = waJid.endsWith('@s.whatsapp.net') ? waJid.split('@')[0] : '';
+      if (!resolvedPhone) resolvedPhone = await resolvePhone(waJid);
+
       if (!lead) {
         const newId = 'wa_' + Date.now();
         const t = Date.now();
-        const phone = waJid.endsWith('@s.whatsapp.net') ? waJid.split('@')[0] : '';
         await env.DB.prepare(
           `INSERT INTO leads (id,salon,name,phone,wa_jid,source,stage,guests,notes,last_message,created_at,updated_at)
            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
-        ).bind(newId,'otros',pushName||'',phone,waJid,'whatsapp','nuevo_lead',0,'',message,t,t).run();
-        lead = { id: newId, wa_jid: waJid, name: pushName||'', phone };
+        ).bind(newId,'otros',pushName||'',resolvedPhone,waJid,'whatsapp','nuevo_lead',0,'',message,t,t).run();
+        lead = { id: newId, wa_jid: waJid, name: pushName||'', phone: resolvedPhone };
+      } else if (!lead.phone && resolvedPhone) {
+        await env.DB.prepare('UPDATE leads SET phone = ?, updated_at = ? WHERE id = ?')
+          .bind(resolvedPhone, Date.now(), lead.id).run();
       }
       const leadId = lead.id;
 
