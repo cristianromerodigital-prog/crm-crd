@@ -120,11 +120,15 @@ async function sendWA(waJid, message, mediaUrl = null, filename = null) {
   try {
     const body = { recipient: waJid, message };
     if (mediaUrl) { body.media_url = mediaUrl; body.filename = filename || 'presupuesto.pdf'; }
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
     await fetch(`${BRIDGE_URL}/api/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      signal: controller.signal,
     });
+    clearTimeout(timer);
   } catch (e) {
     console.error('WA send failed', e);
   }
