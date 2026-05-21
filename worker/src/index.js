@@ -109,7 +109,8 @@ FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
 }
 
 En "extracted" poné SOLO los valores que el cliente mencionó en ESTE mensaje (null si no los dijo).
-En "stage" SIEMPRE poné un valor: "consultando" mientras seguís recopilando datos, "datos_completos" ÚNICAMENTE cuando ya tenés ABSOLUTAMENTE TODOS los datos faltantes listados arriba.`;
+CRÍTICO: si el cliente menciona el tipo de evento (XV, boda, cumpleaños, etc.) en CUALQUIER parte del mensaje, extraelo en "event_type" SIEMPRE, incluso si es el primer mensaje.
+En "stage" SIEMPRE poné un valor: "consultando" mientras seguís recopilando datos, "datos_completos" ÚNICAMENTE cuando ya tenés ABSOLUTAMENTE TODOS los datos faltantes listados arriba y "event_type" está confirmado.`;
 }
 
 function normalizeEventYear(s) {
@@ -374,13 +375,17 @@ export default {
         'INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)'
       ).bind(leadId, 'out', reply, 'Ángela', Date.now(), waMessageId || null).run();
 
-      // Si completó datos, enviar PDF (o aviso) y pasar a presupuesto_enviado
+      // Si completó datos, enviar PDF y pasar a presupuesto_enviado
       if (newStage === 'datos_completos') {
         const fresh = await env.DB.prepare('SELECT wa_jid, event_type FROM leads WHERE id = ?').bind(leadId).first();
         const waJid = fresh?.wa_jid || lead.wa_jid || '';
         const eventType = fresh?.event_type || updates.event_type || '';
-        const pdf = getPdfUrl(eventType);
-        if (waJid) {
+        if (!eventType) {
+          // AI declaró datos_completos sin event_type — rechazar y seguir consultando
+          await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
+            .bind('consultando', Date.now(), leadId).run();
+        } else if (waJid) {
+          const pdf = getPdfUrl(eventType);
           const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
           if (pdf) {
             await sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name);
@@ -487,17 +492,24 @@ export default {
 
       if (newStage === 'datos_completos') {
         const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
-        const pdf = getPdfUrl(fr?.event_type || upd.event_type || '');
-        const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
-        if (pdf) {
-          await sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name);
+        const eventType = fr?.event_type || upd.event_type || '';
+        if (!eventType) {
+          // AI declaró datos_completos sin event_type — rechazar y seguir consultando
+          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
+            .bind('consultando', Date.now(), leadId).run();
         } else {
-          await sendWA(waJid, followupText);
+          const pdf = getPdfUrl(eventType);
+          const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
+          if (pdf) {
+            await sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name);
+          } else {
+            await sendWA(waJid, followupText);
+          }
+          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+            .bind(leadId,'out',followupText,'Ángela',Date.now()).run();
+          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
+            .bind('presupuesto_enviado', Date.now(), leadId).run();
         }
-        await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-          .bind(leadId,'out',followupText,'Ángela',Date.now()).run();
-        await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
-          .bind('presupuesto_enviado', Date.now(), leadId).run();
       }
       return json({ ok: true, reply });
     }

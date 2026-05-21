@@ -907,7 +907,7 @@ async function startApp() {
       apiLeads.forEach(l => {
         leadsData[l.id] = {
           id: l.id, salon: l.salon, name: l.name, phone: l.phone,
-          waJid: l.wa_jid, source: l.source, eventType: l.event_type,
+          waJid: l.wa_jid, source: l.source, eventType: normalizeEventTypeUI(l.event_type),
           eventYear: l.event_year, eventDate: l.event_date, stage: l.stage, guests: l.guests,
           venue: l.venue, city: l.city, schedule: l.schedule, service: l.service, preService: l.pre_service,
           honoreeName: l.honoree_name, coupleNames: l.couple_names,
@@ -1075,7 +1075,7 @@ function processIncomingWAMessage(msg) {
           apiLeads.forEach(l => {
             if (!leadsData[l.id]) leadsData[l.id] = {
               id:l.id, salon:l.salon, name:l.name, phone:l.phone,
-              waJid:l.wa_jid, source:l.source, eventType:l.event_type,
+              waJid:l.wa_jid, source:l.source, eventType:normalizeEventTypeUI(l.event_type),
               eventYear:l.event_year, eventDate:l.event_date, stage:l.stage, guests:l.guests,
               venue:l.venue, city:l.city, schedule:l.schedule, service:l.service, preService:l.pre_service,
               honoreeName:l.honoree_name, coupleNames:l.couple_names,
@@ -1475,6 +1475,17 @@ function autoResize(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
+function normalizeEventTypeUI(s) {
+  const t = (s||'').toLowerCase().trim();
+  if (!t) return s;
+  if (t === 'xv' || t === 'xv años' || t.includes('quince') || t.includes('quinceañ') || t.includes('15')) return '15 años';
+  if (t.includes('boda') || t.includes('casamiento') || t.includes('matrimonio')) return 'Boda';
+  if (t.includes('corporat')) return 'Corporativo';
+  if (t.includes('bautism'))  return 'Bautismo';
+  if (t.includes('cumple'))   return 'Cumpleaños';
+  return s;
+}
+
 function normalizeServiceUI(s) {
   const t = (s||'').toLowerCase().trim();
   if (t.includes('ambos') || t.includes('ambas') || (t.includes('foto') && t.includes('video'))) return 'Foto y video';
@@ -1495,7 +1506,7 @@ function normalizePreServiceUI(s) {
 function fillInfoTab(lead) {
   document.getElementById('infoName').value        = lead.name||'';
   document.getElementById('infoPhone').value       = lead.phone||'';
-  document.getElementById('infoType').value        = lead.eventType||'';
+  document.getElementById('infoType').value        = normalizeEventTypeUI(lead.eventType||'');
   document.getElementById('infoYear').value        = lead.eventYear||'';
   document.getElementById('infoDate').value        = lead.eventDate||'';
   document.getElementById('infoGuests').value      = lead.guests||'';
