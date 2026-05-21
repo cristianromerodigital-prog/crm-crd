@@ -9,7 +9,7 @@ const BRIDGE_URL = 'https://bridge.cristianromerodigital.ar';
 const FIELDS = ['name','event_type','event_year','event_date','venue','city','guests','schedule','service','pre_service','honoree_name','couple_names'];
 const FIELD_LABELS = {
   name:          'nombre completo',
-  event_type:    'tipo de evento (boda, 15 años, corporativo, etc.)',
+  event_type:    'tipo específico de evento: boda, 15 años, corporativo, bautismo o cumpleaños',
   event_year:    'año del evento',
   event_date:    'fecha aproximada del evento (día y mes)',
   venue:         'nombre del lugar o salón donde se realiza',
@@ -133,6 +133,9 @@ function normalizeEventType(s) {
   if (t.includes('corporat')) return 'Corporativo';
   if (t.includes('bautism'))  return 'Bautismo';
   if (t.includes('cumple'))   return 'Cumpleaños';
+  // Rechazar tipos genéricos — el bot debe seguir preguntando
+  const genericos = ['evento','social','fiesta','celebracion','celebración','acto','reunion','reunión','otro'];
+  if (genericos.some(g => t === g)) return '';
   return s;
 }
 
