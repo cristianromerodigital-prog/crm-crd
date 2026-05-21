@@ -121,7 +121,7 @@ async function sendWA(waJid, message, mediaUrl = null, filename = null) {
     const body = { recipient: waJid, message };
     if (mediaUrl) { body.media_url = mediaUrl; body.filename = filename || 'presupuesto.pdf'; }
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 8000);
+    const timer = setTimeout(() => controller.abort(), mediaUrl ? 25000 : 8000);
     await fetch(`${BRIDGE_URL}/api/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -134,8 +134,8 @@ async function sendWA(waJid, message, mediaUrl = null, filename = null) {
   }
 }
 
-const PDF_BODAS  = 'https://drive.google.com/uc?export=download&id=16gSQoRAa5Ao5whsbuoP7uT1v2ioOE0lH';
-const PDF_QUINCE = 'https://drive.google.com/uc?export=download&id=14EL4HQumkWAOVBqjnx3seIqg6YVpXymx';
+const PDF_BODAS  = 'https://drive.google.com/uc?export=download&confirm=t&id=16gSQoRAa5Ao5whsbuoP7uT1v2ioOE0lH';
+const PDF_QUINCE = 'https://drive.google.com/uc?export=download&confirm=t&id=14EL4HQumkWAOVBqjnx3seIqg6YVpXymx';
 
 function getPdfUrl(eventType) {
   const t = (eventType || '').toLowerCase();
