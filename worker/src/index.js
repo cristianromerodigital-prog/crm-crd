@@ -147,7 +147,7 @@ function normalizeService(s) {
 
 function buildFollowupMsg(lead) {
   const name = lead.name ? `, ${lead.name.split(' ')[0]}` : '';
-  return `¡Hola${name}! 😊 Soy Ángela, el asistente de Cristian Romero Digital. Hace una semana estuvimos hablando sobre tu evento y quería saber si todavía estás buscando fotógrafo. ¡Estamos disponibles para ayudarte! ¿Querés que retomemos?`;
+  return `Hola${name}! Soy Angela, del equipo de Cristian Romero Digital. La semana pasada estuvimos hablando sobre tu evento y queria saber si todavia estas buscando fotografo. Estamos disponibles para ayudarte! Queres que retomemos?`;
 }
 
 function json(data, status = 200) {
@@ -209,7 +209,7 @@ async function sendWA(waJid, message, mediaUrl = null, filename = null) {
 const PDF_BODAS  = 'https://drive.google.com/uc?export=download&confirm=t&id=16gSQoRAa5Ao5whsbuoP7uT1v2ioOE0lH';
 const PDF_QUINCE = 'https://drive.google.com/uc?export=download&confirm=t&id=14EL4HQumkWAOVBqjnx3seIqg6YVpXymx';
 
-const PDF_CAPTION = 'Mientras tanto, te envío algunos valores y packs estimados. ¡Tienen una validez de 15 días!';
+const PDF_CAPTION = 'Mientras tanto te envio algunos valores y packs estimados. Tienen una validez de 15 dias.';
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 function pdfFilename(type) {
   const d = new Date();
@@ -220,7 +220,7 @@ function pdfFilename(type) {
 
 function getPdfUrl(eventType) {
   const t = (eventType || '').toLowerCase();
-  if (t.includes('15') || t.includes('xv') || t.includes('quince') || t.includes('años')) return { url: PDF_QUINCE, name: pdfFilename('15 Años') };
+  if (t.includes('15') || t.includes('xv') || t.includes('quince') || t.includes('años')) return { url: PDF_QUINCE, name: pdfFilename('15 Anos') };
   if (t.includes('boda') || t.includes('casamiento') || t.includes('matrimonio')) return { url: PDF_BODAS, name: pdfFilename('Bodas') };
   return null;
 }
@@ -383,9 +383,9 @@ export default {
             .bind('consultando', Date.now(), leadId).run();
         } else {
           const pdf = getPdfUrl(eventType);
-          const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
+          const followupText = pdf ? `${pdf.name} - ${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
           await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId, 'out', followupText, 'Ángela', Date.now()).run();
+            .bind(leadId, 'out', followupText, 'Angela', Date.now()).run();
           await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
             .bind('presupuesto_enviado', Date.now(), leadId).run();
           if (wJid) ctx.waitUntil(pdf
@@ -493,9 +493,9 @@ export default {
             .bind('consultando', Date.now(), leadId).run();
         } else {
           const pdf = getPdfUrl(eventType);
-          const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
+          const followupText = pdf ? `${pdf.name} - ${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
           await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId,'out',followupText,'Ángela',Date.now()).run();
+            .bind(leadId,'out',followupText,'Angela',Date.now()).run();
           await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
             .bind('presupuesto_enviado', Date.now(), leadId).run();
           ctx.waitUntil(pdf
