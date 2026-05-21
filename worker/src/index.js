@@ -15,7 +15,7 @@ const FIELD_LABELS = {
   city:          'localidad o ciudad donde se realiza el evento',
   guests:        'cantidad aproximada de invitados',
   schedule:      'horario (inicio y fin estimado)',
-  service:       'si necesita foto, video o ambos',
+  service:       'cobertura: "Foto", "Video" o "Foto y video"',
   pre_service:   'si le interesa hacer un Pre (book de exteriores antes del evento)',
   honoree_name:  'nombre de la quinceañera',
   couple_names:  'nombres de los novios',
@@ -42,7 +42,7 @@ function buildSystemPrompt(lead) {
   }
 
   const eventType = (collected['event_type'] || '').toLowerCase();
-  const isBoV    = eventType.includes('boda') || eventType.includes('casamiento') || eventType.includes('matrimonio') || eventType.includes('15') || eventType.includes('quince');
+  const isBoV    = eventType.includes('boda') || eventType.includes('casamiento') || eventType.includes('matrimonio') || eventType.includes('15') || eventType.includes('xv') || eventType.includes('quince');
   const isQuince = eventType.includes('15') || eventType.includes('xv') || eventType.includes('quince');
   const isBoda   = eventType.includes('boda') || eventType.includes('casamiento') || eventType.includes('matrimonio');
 
@@ -100,6 +100,26 @@ FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
 
 En "extracted" poné SOLO los valores que el cliente mencionó en ESTE mensaje (null si no los dijo).
 En "stage" SIEMPRE poné un valor: "consultando" mientras seguís recopilando datos, "datos_completos" ÚNICAMENTE cuando ya tenés ABSOLUTAMENTE TODOS los datos faltantes listados arriba.`;
+}
+
+function normalizeEventType(s) {
+  if (!s) return s;
+  const t = s.toLowerCase().trim();
+  if (t === 'xv' || t === 'xv años' || t.includes('quince') || t.includes('quinceañ') || t.includes('15')) return '15 años';
+  if (t.includes('boda') || t.includes('casamiento') || t.includes('matrimonio')) return 'Boda';
+  if (t.includes('corporat')) return 'Corporativo';
+  if (t.includes('bautism'))  return 'Bautismo';
+  if (t.includes('cumple'))   return 'Cumpleaños';
+  return s;
+}
+
+function normalizeService(s) {
+  if (!s) return s;
+  const t = s.toLowerCase().trim();
+  if (t.includes('ambos') || t.includes('ambas') || (t.includes('foto') && t.includes('video'))) return 'Foto y video';
+  if (t.includes('foto'))  return 'Foto';
+  if (t.includes('video')) return 'Video';
+  return s;
 }
 
 function buildFollowupMsg(lead) {
@@ -298,13 +318,13 @@ export default {
       // Actualizar lead con campos extraídos + last_msg_at
       const updates = { last_msg_at: Date.now(), followup_due: 0 };
       if (extracted.name         && extracted.name         !== 'null') updates.name         = extracted.name;
-      if (extracted.event_type   && extracted.event_type   !== 'null') updates.event_type   = extracted.event_type;
+      if (extracted.event_type   && extracted.event_type   !== 'null') updates.event_type   = normalizeEventType(extracted.event_type);
       if (extracted.event_date   && extracted.event_date   !== 'null') updates.event_date   = extracted.event_date;
       if (extracted.venue        && extracted.venue        !== 'null') updates.venue        = extracted.venue;
       if (extracted.city         && extracted.city         !== 'null') updates.city         = extracted.city;
       if (extracted.guests       && extracted.guests       !== 'null') updates.guests       = parseInt(extracted.guests)||0;
       if (extracted.schedule     && extracted.schedule     !== 'null') updates.schedule     = extracted.schedule;
-      if (extracted.service      && extracted.service      !== 'null') updates.service      = extracted.service;
+      if (extracted.service      && extracted.service      !== 'null') updates.service      = normalizeService(extracted.service);
       if (extracted.pre_service  && extracted.pre_service  !== 'null') updates.pre_service  = extracted.pre_service;
       if (extracted.honoree_name && extracted.honoree_name !== 'null') updates.honoree_name = extracted.honoree_name;
       if (extracted.couple_names && extracted.couple_names !== 'null') updates.couple_names = extracted.couple_names;
@@ -360,11 +380,12 @@ export default {
       if (!lead) {
         const newId = 'wa_' + Date.now();
         const t = Date.now();
+        const phone = waJid.split('@')[0];
         await env.DB.prepare(
           `INSERT INTO leads (id,salon,name,phone,wa_jid,source,stage,guests,notes,last_message,created_at,updated_at)
            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
-        ).bind(newId,'otros',pushName||'','',waJid,'whatsapp','nuevo_lead',0,'',message,t,t).run();
-        lead = { id: newId, wa_jid: waJid, name: pushName||'' };
+        ).bind(newId,'otros',pushName||'',phone,waJid,'whatsapp','nuevo_lead',0,'',message,t,t).run();
+        lead = { id: newId, wa_jid: waJid, name: pushName||'', phone };
       }
       const leadId = lead.id;
 
@@ -402,13 +423,13 @@ export default {
       const newStage = parsed.stage || null;
       const upd = { last_msg_at: Date.now(), followup_due: 0 };
       if (extracted.name         && extracted.name         !== 'null') upd.name         = extracted.name;
-      if (extracted.event_type   && extracted.event_type   !== 'null') upd.event_type   = extracted.event_type;
+      if (extracted.event_type   && extracted.event_type   !== 'null') upd.event_type   = normalizeEventType(extracted.event_type);
       if (extracted.event_date   && extracted.event_date   !== 'null') upd.event_date   = extracted.event_date;
       if (extracted.venue        && extracted.venue        !== 'null') upd.venue        = extracted.venue;
       if (extracted.city         && extracted.city         !== 'null') upd.city         = extracted.city;
       if (extracted.guests       && extracted.guests       !== 'null') upd.guests       = parseInt(extracted.guests)||0;
       if (extracted.schedule     && extracted.schedule     !== 'null') upd.schedule     = extracted.schedule;
-      if (extracted.service      && extracted.service      !== 'null') upd.service      = extracted.service;
+      if (extracted.service      && extracted.service      !== 'null') upd.service      = normalizeService(extracted.service);
       if (extracted.pre_service  && extracted.pre_service  !== 'null') upd.pre_service  = extracted.pre_service;
       if (extracted.honoree_name && extracted.honoree_name !== 'null') upd.honoree_name = extracted.honoree_name;
       if (extracted.couple_names && extracted.couple_names !== 'null') upd.couple_names = extracted.couple_names;

@@ -1474,6 +1474,20 @@ function autoResize(el) {
   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
+function normalizeServiceUI(s) {
+  const t = (s||'').toLowerCase().trim();
+  if (t.includes('ambos') || t.includes('ambas') || (t.includes('foto') && t.includes('video'))) return 'Foto y video';
+  if (t.includes('foto'))  return 'Foto';
+  if (t.includes('video')) return 'Video';
+  return s;
+}
+function normalizePreServiceUI(s) {
+  const t = (s||'').toLowerCase().trim();
+  if (t === 'sí' || t === 'si' || t === 'yes' || t === 's') return 'si';
+  if (t === 'no' || t === 'n')  return 'no';
+  return s;
+}
+
 // ════════════════════════════════════════════════════════════
 // INFO TAB
 // ════════════════════════════════════════════════════════════
@@ -1487,8 +1501,8 @@ function fillInfoTab(lead) {
   document.getElementById('infoVenue').value        = lead.venue||'';
   document.getElementById('infoCity').value         = lead.city||'';
   document.getElementById('infoSchedule').value     = lead.schedule||'';
-  document.getElementById('infoService').value      = lead.service||'';
-  document.getElementById('infoPreService').value   = lead.preService||'';
+  document.getElementById('infoService').value      = normalizeServiceUI(lead.service||'');
+  document.getElementById('infoPreService').value   = normalizePreServiceUI(lead.preService||'');
   document.getElementById('infoHonoreeName').value  = lead.honoreeName||'';
   document.getElementById('infoCoupleNames').value  = lead.coupleNames||'';
   document.getElementById('infoSource').value       = lead.source||'whatsapp';
