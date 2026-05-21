@@ -305,7 +305,7 @@ select.info-input option{background:#fff}
     <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V2.25</div>
+    <div class="login-version">V2.26</div>
     <div id="demoHint" style="display:none;margin-top:20px;padding:12px;background:#1e293b;border-radius:8px;font-size:12px;color:#94a3b8;text-align:left;line-height:1.8">
       <strong style="color:#c9a84c">Modo Demo</strong><br>
       nico@crm.com &nbsp;&nbsp;&nbsp;/ palacio123<br>
@@ -325,7 +325,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.25</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.26</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -403,12 +403,53 @@ select.info-input option{background:#fff}
       <div class="info-2col">
         <div class="info-row">
           <div class="info-label">Fecha aproximada</div>
-          <input class="info-input" id="infoDate" type="date"/>
+          <input class="info-input" id="infoDate" type="text" placeholder="dd/mm/aaaa"/>
         </div>
         <div class="info-row">
           <div class="info-label">Invitados</div>
           <input class="info-input" id="infoGuests" type="number" placeholder="0"/>
         </div>
+      </div>
+      <div class="info-2col">
+        <div class="info-row">
+          <div class="info-label">Lugar / Salón</div>
+          <input class="info-input" id="infoVenue" placeholder="Nombre del salón"/>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Localidad / Ciudad</div>
+          <input class="info-input" id="infoCity" placeholder="Ej: CABA, Pilar..."/>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Horario</div>
+        <input class="info-input" id="infoSchedule" placeholder="Ej: 18:00 a 01:00"/>
+      </div>
+      <div class="info-2col">
+        <div class="info-row">
+          <div class="info-label">Cobertura</div>
+          <select class="info-input" id="infoService">
+            <option value="">Seleccionar</option>
+            <option>Foto</option>
+            <option>Video</option>
+            <option>Foto y video</option>
+          </select>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Book exteriores</div>
+          <select class="info-input" id="infoPreService">
+            <option value="">Sin datos</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Nombre de la quinceañera</div>
+        <input class="info-input" id="infoHonoreeName" placeholder="Solo para 15 años"/>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Nombres de los novios</div>
+        <input class="info-input" id="infoCoupleNames" placeholder="Solo para bodas"/>
       </div>
       <div class="info-row">
         <div class="info-label">Origen</div>
@@ -867,7 +908,9 @@ async function startApp() {
         leadsData[l.id] = {
           id: l.id, salon: l.salon, name: l.name, phone: l.phone,
           waJid: l.wa_jid, source: l.source, eventType: l.event_type,
-          eventYear: l.event_year, stage: l.stage, guests: l.guests,
+          eventYear: l.event_year, eventDate: l.event_date, stage: l.stage, guests: l.guests,
+          venue: l.venue, city: l.city, schedule: l.schedule, service: l.service, preService: l.pre_service,
+          honoreeName: l.honoree_name, coupleNames: l.couple_names,
           notes: l.notes, lastMessage: l.last_message, _ts: l.updated_at,
           updatedAt: { toDate: () => new Date(l.updated_at), seconds: l.updated_at/1000 }
         };
@@ -922,11 +965,22 @@ async function callAI(leadId, incomingText, waMessageId = null) {
     window._demoConvs[leadId].push({ dir:'out', text: reply, who:'Ángela', time:'ahora' });
 
     // Actualizar lead con campos extraídos
-    if (data.extracted) Object.assign(leadsData[leadId], {
-      name:      data.extracted.name      || leadsData[leadId].name,
-      eventType: data.extracted.event_type|| leadsData[leadId].eventType,
-      guests:    data.extracted.guests    || leadsData[leadId].guests,
-    });
+    if (data.extracted) {
+      const ex = data.extracted, ld = leadsData[leadId];
+      Object.assign(ld, {
+        name:       ex.name        || ld.name,
+        eventType:  ex.event_type  || ld.eventType,
+        eventDate:  ex.event_date  || ld.eventDate,
+        guests:     ex.guests      || ld.guests,
+        venue:      ex.venue       || ld.venue,
+        city:       ex.city        || ld.city,
+        schedule:   ex.schedule    || ld.schedule,
+        service:     ex.service       || ld.service,
+        preService:  ex.pre_service   || ld.preService,
+        honoreeName: ex.honoree_name  || ld.honoreeName,
+        coupleNames: ex.couple_names  || ld.coupleNames,
+      });
+    }
     if (data.stage) leadsData[leadId].stage = data.stage;
     leadsData[leadId].lastMessage = reply;
 
@@ -1021,7 +1075,9 @@ function processIncomingWAMessage(msg) {
             if (!leadsData[l.id]) leadsData[l.id] = {
               id:l.id, salon:l.salon, name:l.name, phone:l.phone,
               waJid:l.wa_jid, source:l.source, eventType:l.event_type,
-              eventYear:l.event_year, stage:l.stage, guests:l.guests,
+              eventYear:l.event_year, eventDate:l.event_date, stage:l.stage, guests:l.guests,
+              venue:l.venue, city:l.city, schedule:l.schedule, service:l.service, preService:l.pre_service,
+              honoreeName:l.honoree_name, coupleNames:l.couple_names,
               notes:l.notes, lastMessage:l.last_message, _ts:l.updated_at,
               updatedAt:{ toDate:()=>new Date(l.updated_at), seconds:l.updated_at/1000 }
             };
@@ -1422,34 +1478,52 @@ function autoResize(el) {
 // INFO TAB
 // ════════════════════════════════════════════════════════════
 function fillInfoTab(lead) {
-  document.getElementById('infoName').value     = lead.name||'';
-  document.getElementById('infoPhone').value    = lead.phone||'';
-  document.getElementById('infoType').value     = lead.eventType||'';
-  document.getElementById('infoYear').value     = lead.eventYear||'';
-  document.getElementById('infoDate').value     = lead.eventDate||'';
-  document.getElementById('infoGuests').value   = lead.guests||'';
-  document.getElementById('infoSource').value   = lead.source||'whatsapp';
-  document.getElementById('infoAssigned').value = lead.assignedTo||'';
-  document.getElementById('infoNotes').value    = lead.notes||'';
+  document.getElementById('infoName').value        = lead.name||'';
+  document.getElementById('infoPhone').value       = lead.phone||'';
+  document.getElementById('infoType').value        = lead.eventType||'';
+  document.getElementById('infoYear').value        = lead.eventYear||'';
+  document.getElementById('infoDate').value        = lead.eventDate||'';
+  document.getElementById('infoGuests').value      = lead.guests||'';
+  document.getElementById('infoVenue').value        = lead.venue||'';
+  document.getElementById('infoCity').value         = lead.city||'';
+  document.getElementById('infoSchedule').value     = lead.schedule||'';
+  document.getElementById('infoService').value      = lead.service||'';
+  document.getElementById('infoPreService').value   = lead.preService||'';
+  document.getElementById('infoHonoreeName').value  = lead.honoreeName||'';
+  document.getElementById('infoCoupleNames').value  = lead.coupleNames||'';
+  document.getElementById('infoSource').value       = lead.source||'whatsapp';
+  document.getElementById('infoAssigned').value    = lead.assignedTo||'';
+  document.getElementById('infoNotes').value       = lead.notes||'';
   document.getElementById('saveOk').style.opacity = '0';
 }
 
 async function saveInfo() {
   if (!currentLeadId) return;
   const data = {
-    name:      document.getElementById('infoName').value.trim(),
-    phone:     document.getElementById('infoPhone').value.trim(),
-    eventType: document.getElementById('infoType').value,
-    eventYear: document.getElementById('infoYear').value,
-    guests:    parseInt(document.getElementById('infoGuests').value)||0,
-    source:    document.getElementById('infoSource').value,
-    notes:     document.getElementById('infoNotes').value,
+    name:       document.getElementById('infoName').value.trim(),
+    phone:      document.getElementById('infoPhone').value.trim(),
+    eventType:  document.getElementById('infoType').value,
+    eventYear:  document.getElementById('infoYear').value,
+    eventDate:  document.getElementById('infoDate').value.trim(),
+    guests:     parseInt(document.getElementById('infoGuests').value)||0,
+    venue:      document.getElementById('infoVenue').value.trim(),
+    city:       document.getElementById('infoCity').value.trim(),
+    schedule:   document.getElementById('infoSchedule').value.trim(),
+    service:    document.getElementById('infoService').value,
+    preService:   document.getElementById('infoPreService').value,
+    honoreeName:  document.getElementById('infoHonoreeName').value.trim(),
+    coupleNames:  document.getElementById('infoCoupleNames').value.trim(),
+    source:       document.getElementById('infoSource').value,
+    notes:      document.getElementById('infoNotes').value,
   };
   if (window._demoMode && currentLeadId.startsWith('wa_')) {
     Object.assign(leadsData[currentLeadId], data);
     await apiUpdateLead(currentLeadId, {
       name: data.name, phone: data.phone, event_type: data.eventType,
-      event_year: data.eventYear, guests: data.guests, source: data.source, notes: data.notes
+      event_year: data.eventYear, event_date: data.eventDate, guests: data.guests,
+      venue: data.venue, city: data.city, schedule: data.schedule, service: data.service,
+      pre_service: data.preService, honoree_name: data.honoreeName,
+      couple_names: data.coupleNames, source: data.source, notes: data.notes
     });
   } else if (!window._demoMode) {
     await db.collection('leads').doc(currentLeadId).update({

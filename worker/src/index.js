@@ -6,26 +6,32 @@ const CORS = {
 
 const BRIDGE_URL = 'https://bridge.cristianromerodigital.ar';
 
-const FIELDS = ['name','event_type','event_date','venue','guests','schedule','service','pre_service'];
+const FIELDS = ['name','event_type','event_date','venue','city','guests','schedule','service','pre_service','honoree_name','couple_names'];
 const FIELD_LABELS = {
-  name:        'nombre completo',
-  event_type:  'tipo de evento (boda, 15 años, corporativo, etc.)',
-  event_date:  'fecha del evento',
-  venue:       'lugar o salón donde se realiza',
-  guests:      'cantidad aproximada de invitados',
-  schedule:    'horario (inicio y fin estimado)',
-  service:     'si necesita foto, video o ambos',
-  pre_service: 'si le interesa hacer un Pre (book de exteriores antes del evento)',
+  name:          'nombre completo',
+  event_type:    'tipo de evento (boda, 15 años, corporativo, etc.)',
+  event_date:    'fecha del evento',
+  venue:         'nombre del lugar o salón donde se realiza',
+  city:          'localidad o ciudad donde se realiza el evento',
+  guests:        'cantidad aproximada de invitados',
+  schedule:      'horario (inicio y fin estimado)',
+  service:       'si necesita foto, video o ambos',
+  pre_service:   'si le interesa hacer un Pre (book de exteriores antes del evento)',
+  honoree_name:  'nombre de la quinceañera',
+  couple_names:  'nombres de los novios',
 };
 const FIELD_WHY = {
-  name:        'para personalizar la propuesta',
-  event_type:  'porque cada tipo de evento tiene cobertura diferente',
-  event_date:  'para verificar disponibilidad de Cristian ese día',
-  venue:       'para saber si hay traslado incluido en la cotización',
-  guests:      'porque más invitados implica más horas de cobertura',
-  schedule:    'para calcular las horas exactas de trabajo',
-  service:     'porque foto y video tienen precios distintos',
-  pre_service: 'es una sesión de fotos de exteriores previa al evento, muy recomendada para bodas y 15 años',
+  name:          'para personalizar la propuesta',
+  event_type:    'porque cada tipo de evento tiene cobertura diferente',
+  event_date:    'para verificar disponibilidad de Cristian ese día',
+  venue:         'para saber si hay traslado incluido en la cotización',
+  city:          'para calcular si hay traslado y los costos de movilidad',
+  guests:        'porque más invitados implica más horas de cobertura',
+  schedule:      'para calcular las horas exactas de trabajo',
+  service:       'porque foto y video tienen precios distintos',
+  pre_service:   'es una sesión de fotos de exteriores previa al evento, muy recomendada para bodas y 15 años',
+  honoree_name:  'para personalizar la propuesta y los materiales del evento',
+  couple_names:  'para personalizar la propuesta y los materiales del evento',
 };
 
 function buildSystemPrompt(lead) {
@@ -34,12 +40,22 @@ function buildSystemPrompt(lead) {
     const val = lead[f] || lead[f.replace('_','')];
     if (val && val !== '' && val !== '0') collected[f] = val;
   }
-  const missing = FIELDS.filter(f => !collected[f]);
-  const missingDesc = missing.map(f => `- ${FIELD_LABELS[f]} (${FIELD_WHY[f]})`).join('\n');
-  const collectedDesc = Object.entries(collected).map(([f,v]) => `- ${FIELD_LABELS[f]}: ${v}`).join('\n');
 
   const eventType = (collected['event_type'] || '').toLowerCase();
-  const isBoV = eventType.includes('boda') || eventType.includes('casamiento') || eventType.includes('matrimonio') || eventType.includes('15') || eventType.includes('quince');
+  const isBoV    = eventType.includes('boda') || eventType.includes('casamiento') || eventType.includes('matrimonio') || eventType.includes('15') || eventType.includes('quince');
+  const isQuince = eventType.includes('15') || eventType.includes('xv') || eventType.includes('quince');
+  const isBoda   = eventType.includes('boda') || eventType.includes('casamiento') || eventType.includes('matrimonio');
+
+  const missing = FIELDS.filter(f => {
+    if (collected[f]) return false;
+    if (f === 'pre_service'  && !isBoV)   return false;
+    if (f === 'honoree_name' && !isQuince) return false;
+    if (f === 'couple_names' && !isBoda)   return false;
+    return true;
+  });
+
+  const missingDesc  = missing.map(f => `- ${FIELD_LABELS[f]} (${FIELD_WHY[f]})`).join('\n');
+  const collectedDesc = Object.entries(collected).map(([f,v]) => `- ${FIELD_LABELS[f]}: ${v}`).join('\n');
 
   return `Sos Ángela, del equipo de Cristian Romero Digital, fotógrafo profesional de eventos sociales en Buenos Aires.
 
@@ -55,7 +71,6 @@ INSTRUCCIONES:
 - Hablá en español rioplatense, tono cálido y cercano, nunca robótico
 - En el primer mensaje saludá con tu nombre sin decir que sos asistente ni nada por el estilo, simplemente "Hola, soy Ángela, del equipo de Cristian"
 - Pedí los datos faltantes de forma natural, de a uno o dos por mensaje como máximo
-- El campo "pre_service" solo preguntalo si el evento es boda o 15 años${isBoV ? ' (aplica para este evento)' : ' (NO aplica para este evento, omitilo)'}
 - Cuando el cliente no dé un dato, insistí amablemente UNA sola vez explicando el motivo
 - Si el cliente esquiva un dato más de una vez, avanzá con lo que tenés
 - Si el cliente manda un mensaje ofensivo, inapropiado o completamente irrelevante, NO lo tomes como respuesta válida. Respondé con calma, ignorá el contenido ofensivo y repetí la pregunta que estabas haciendo
@@ -72,10 +87,13 @@ FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
     "event_type": null,
     "event_date": null,
     "venue": null,
+    "city": null,
     "guests": null,
     "schedule": null,
     "service": null,
-    "pre_service": null
+    "pre_service": null,
+    "honoree_name": null,
+    "couple_names": null
   },
   "stage": "consultando"
 }
@@ -195,8 +213,9 @@ export default {
       const id  = leadMatch[1];
       const b   = await request.json();
       const allowed = ['salon','name','phone','wa_jid','source','event_type','event_year',
-                       'stage','guests','notes','last_message','event_date','venue',
-                       'schedule','service','last_msg_at','followup_due'];
+                       'stage','guests','notes','last_message','event_date','venue','city',
+                       'schedule','service','pre_service','honoree_name','couple_names',
+                       'last_msg_at','followup_due'];
       const fields = [], vals = [];
       for (const k of allowed) {
         if (k in b) { fields.push(`${k} = ?`); vals.push(b[k]); }
@@ -278,14 +297,17 @@ export default {
 
       // Actualizar lead con campos extraídos + last_msg_at
       const updates = { last_msg_at: Date.now(), followup_due: 0 };
-      if (extracted.name       && extracted.name       !== 'null') updates.name       = extracted.name;
-      if (extracted.event_type && extracted.event_type !== 'null') updates.event_type = extracted.event_type;
-      if (extracted.event_date && extracted.event_date !== 'null') updates.event_date = extracted.event_date;
-      if (extracted.venue      && extracted.venue      !== 'null') updates.venue      = extracted.venue;
-      if (extracted.guests     && extracted.guests     !== 'null') updates.guests     = parseInt(extracted.guests)||0;
-      if (extracted.schedule   && extracted.schedule   !== 'null') updates.schedule   = extracted.schedule;
-      if (extracted.service     && extracted.service     !== 'null') updates.service     = extracted.service;
-      if (extracted.pre_service && extracted.pre_service !== 'null') updates.pre_service = extracted.pre_service;
+      if (extracted.name         && extracted.name         !== 'null') updates.name         = extracted.name;
+      if (extracted.event_type   && extracted.event_type   !== 'null') updates.event_type   = extracted.event_type;
+      if (extracted.event_date   && extracted.event_date   !== 'null') updates.event_date   = extracted.event_date;
+      if (extracted.venue        && extracted.venue        !== 'null') updates.venue        = extracted.venue;
+      if (extracted.city         && extracted.city         !== 'null') updates.city         = extracted.city;
+      if (extracted.guests       && extracted.guests       !== 'null') updates.guests       = parseInt(extracted.guests)||0;
+      if (extracted.schedule     && extracted.schedule     !== 'null') updates.schedule     = extracted.schedule;
+      if (extracted.service      && extracted.service      !== 'null') updates.service      = extracted.service;
+      if (extracted.pre_service  && extracted.pre_service  !== 'null') updates.pre_service  = extracted.pre_service;
+      if (extracted.honoree_name && extracted.honoree_name !== 'null') updates.honoree_name = extracted.honoree_name;
+      if (extracted.couple_names && extracted.couple_names !== 'null') updates.couple_names = extracted.couple_names;
       if (newStage) updates.stage = newStage;
 
       const setClauses = Object.keys(updates).map(k => `${k} = ?`).join(', ');
@@ -379,14 +401,17 @@ export default {
       const extracted = parsed.extracted || {};
       const newStage = parsed.stage || null;
       const upd = { last_msg_at: Date.now(), followup_due: 0 };
-      if (extracted.name        && extracted.name        !== 'null') upd.name        = extracted.name;
-      if (extracted.event_type  && extracted.event_type  !== 'null') upd.event_type  = extracted.event_type;
-      if (extracted.event_date  && extracted.event_date  !== 'null') upd.event_date  = extracted.event_date;
-      if (extracted.venue       && extracted.venue       !== 'null') upd.venue       = extracted.venue;
-      if (extracted.guests      && extracted.guests      !== 'null') upd.guests      = parseInt(extracted.guests)||0;
-      if (extracted.schedule    && extracted.schedule    !== 'null') upd.schedule    = extracted.schedule;
-      if (extracted.service     && extracted.service     !== 'null') upd.service     = extracted.service;
-      if (extracted.pre_service && extracted.pre_service !== 'null') upd.pre_service = extracted.pre_service;
+      if (extracted.name         && extracted.name         !== 'null') upd.name         = extracted.name;
+      if (extracted.event_type   && extracted.event_type   !== 'null') upd.event_type   = extracted.event_type;
+      if (extracted.event_date   && extracted.event_date   !== 'null') upd.event_date   = extracted.event_date;
+      if (extracted.venue        && extracted.venue        !== 'null') upd.venue        = extracted.venue;
+      if (extracted.city         && extracted.city         !== 'null') upd.city         = extracted.city;
+      if (extracted.guests       && extracted.guests       !== 'null') upd.guests       = parseInt(extracted.guests)||0;
+      if (extracted.schedule     && extracted.schedule     !== 'null') upd.schedule     = extracted.schedule;
+      if (extracted.service      && extracted.service      !== 'null') upd.service      = extracted.service;
+      if (extracted.pre_service  && extracted.pre_service  !== 'null') upd.pre_service  = extracted.pre_service;
+      if (extracted.honoree_name && extracted.honoree_name !== 'null') upd.honoree_name = extracted.honoree_name;
+      if (extracted.couple_names && extracted.couple_names !== 'null') upd.couple_names = extracted.couple_names;
       if (newStage) upd.stage = newStage;
       const setCls = Object.keys(upd).map(k=>`${k}=?`).join(',');
       await env.DB.prepare(`UPDATE leads SET ${setCls},updated_at=? WHERE id=?`)

@@ -8,11 +8,21 @@ CREATE TABLE IF NOT EXISTS leads (
   event_type  TEXT,
   event_year  TEXT,
   stage       TEXT DEFAULT 'nuevo_lead',
-  guests      INTEGER DEFAULT 0,
-  notes       TEXT,
-  last_message TEXT,
-  created_at  INTEGER,
-  updated_at  INTEGER
+  guests        INTEGER DEFAULT 0,
+  notes         TEXT,
+  last_message  TEXT,
+  event_date    TEXT DEFAULT '',
+  venue         TEXT DEFAULT '',
+  city          TEXT DEFAULT '',
+  schedule      TEXT DEFAULT '',
+  service       TEXT DEFAULT '',
+  pre_service   TEXT DEFAULT '',
+  honoree_name  TEXT DEFAULT '',
+  couple_names  TEXT DEFAULT '',
+  last_msg_at   INTEGER DEFAULT 0,
+  followup_due  INTEGER DEFAULT 0,
+  created_at    INTEGER,
+  updated_at    INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS messages (
