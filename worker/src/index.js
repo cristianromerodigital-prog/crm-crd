@@ -77,11 +77,11 @@ FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
     "service": null,
     "pre_service": null
   },
-  "stage": null
+  "stage": "consultando"
 }
 
 En "extracted" poné SOLO los valores que el cliente mencionó en ESTE mensaje (null si no los dijo).
-En "stage" poné: "consultando" si seguís recopilando, "datos_completos" si ya tenés todos los datos.`;
+En "stage" SIEMPRE poné un valor: "consultando" mientras seguís recopilando datos, "datos_completos" ÚNICAMENTE cuando ya tenés ABSOLUTAMENTE TODOS los datos faltantes listados arriba.`;
 }
 
 function buildFollowupMsg(lead) {
@@ -284,14 +284,18 @@ export default {
         'INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)'
       ).bind(leadId, 'out', reply, 'Ángela', Date.now(), waMessageId || null).run();
 
-      // Si completó datos, enviar PDF y pasar a presupuesto_enviado
+      // Si completó datos, enviar PDF (o aviso) y pasar a presupuesto_enviado
       if (newStage === 'datos_completos') {
         const fresh = await env.DB.prepare('SELECT wa_jid, event_type FROM leads WHERE id = ?').bind(leadId).first();
         const waJid = fresh?.wa_jid || lead.wa_jid || '';
         const eventType = fresh?.event_type || updates.event_type || '';
         const pdf = getPdfUrl(eventType);
-        if (waJid && pdf) {
-          await sendWA(waJid, '', pdf.url, pdf.name);
+        if (waJid) {
+          if (pdf) {
+            await sendWA(waJid, '', pdf.url, pdf.name);
+          } else {
+            await sendWA(waJid, 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊');
+          }
           await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
             .bind('presupuesto_enviado', Date.now(), leadId).run();
         }
@@ -379,12 +383,14 @@ export default {
 
       if (newStage === 'datos_completos') {
         const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
-        const pdf = getPdfUrl(fr?.event_type||upd.event_type||'');
+        const pdf = getPdfUrl(fr?.event_type || upd.event_type || '');
         if (pdf) {
-          await sendWA(waJid,'',pdf.url,pdf.name);
-          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
-            .bind('presupuesto_enviado',Date.now(),leadId).run();
+          await sendWA(waJid, '', pdf.url, pdf.name);
+        } else {
+          await sendWA(waJid, 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊');
         }
+        await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
+          .bind('presupuesto_enviado', Date.now(), leadId).run();
       }
       return json({ ok: true, reply });
     }
