@@ -295,11 +295,14 @@ export default {
         const eventType = fresh?.event_type || updates.event_type || '';
         const pdf = getPdfUrl(eventType);
         if (waJid) {
+          const followupText = pdf ? `📎 ${pdf.name}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
           if (pdf) {
             await sendWA(waJid, '', pdf.url, pdf.name);
           } else {
-            await sendWA(waJid, 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊');
+            await sendWA(waJid, followupText);
           }
+          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+            .bind(leadId, 'out', followupText, 'Ángela', Date.now()).run();
           await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
             .bind('presupuesto_enviado', Date.now(), leadId).run();
         }
@@ -388,11 +391,14 @@ export default {
       if (newStage === 'datos_completos') {
         const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
         const pdf = getPdfUrl(fr?.event_type || upd.event_type || '');
+        const followupText = pdf ? `📎 ${pdf.name}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
         if (pdf) {
           await sendWA(waJid, '', pdf.url, pdf.name);
         } else {
-          await sendWA(waJid, 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊');
+          await sendWA(waJid, followupText);
         }
+        await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+          .bind(leadId,'out',followupText,'Ángela',Date.now()).run();
         await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
           .bind('presupuesto_enviado', Date.now(), leadId).run();
       }
