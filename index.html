@@ -118,6 +118,11 @@ header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;backg
 .msg.in .msg-bubble{background:#fff;border:1px solid var(--border);border-radius:14px 14px 14px 2px;color:var(--text)}
 .msg.out .msg-bubble{background:var(--header-bg);color:var(--accent);border-radius:14px 14px 2px 14px;border:1px solid var(--accent)}
 .msg-meta{font-size:10px;color:var(--subtle)}
+.msg-doc{display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:14px;border:1px solid var(--accent);background:var(--header-bg);max-width:260px}
+.msg-doc-icon{font-size:22px;flex-shrink:0}
+.msg-doc-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.msg-doc-name{font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-doc-caption{font-size:11px;color:var(--accent);opacity:.8;line-height:1.3}
 .chat-input-area{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;flex-shrink:0;background:#fff}
 .chat-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-size:16px;font-family:inherit;resize:none;max-height:120px;outline:none;line-height:1.4}
 .chat-input:focus{border-color:var(--accent)}
@@ -682,7 +687,7 @@ async function apiLoadLeadAndRefresh(leadId) {
       const msgList = document.getElementById('msgList');
       if (msgList) {
         msgList.innerHTML = window._demoConvs[leadId].map(m =>
-          `<div class="msg ${m.dir}"><div class="msg-bubble">${esc(m.text)}</div><div class="msg-meta">${m.dir==='out'?(m.who||'Ángela')+' ':""}ahora</div></div>`
+          `<div class="msg ${m.dir}">${renderMsgBubble(m.text)}<div class="msg-meta">${m.dir==='out'?(m.who||'Ángela')+' ':""}ahora</div></div>`
         ).join('');
         msgList.scrollTop = msgList.scrollHeight;
       }
@@ -1731,7 +1736,7 @@ function openLead(id) {
         if (msgs.length) {
           msgList.innerHTML = msgs.map(m => `
             <div class="msg ${m.direction}">
-              <div class="msg-bubble">${esc(m.text)}</div>
+              ${renderMsgBubble(m.text)}
               <div class="msg-meta">${m.direction==='out'?(m.author||'')+'  ':''} ${relTime(new Date(m.ts))}</div>
             </div>
           `).join('');
@@ -1739,7 +1744,7 @@ function openLead(id) {
           const cached = (window._demoConvs && window._demoConvs[id]) || [];
           msgList.innerHTML = cached.map(m => `
             <div class="msg ${m.dir}">
-              <div class="msg-bubble">${esc(m.text)}</div>
+              ${renderMsgBubble(m.text)}
               <div class="msg-meta">${m.dir==='out'?(m.who||'')+'  ':''} ${m.time}</div>
             </div>
           `).join('');
@@ -1783,6 +1788,16 @@ function openLead(id) {
 // ════════════════════════════════════════════════════════════
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function renderMsgBubble(text) {
+  const t = String(text||'');
+  if (t.startsWith('📎 ')) {
+    const nl = t.indexOf('\n');
+    const filename = nl > 0 ? t.slice(3, nl) : t.slice(3);
+    const caption  = nl > 0 ? t.slice(nl + 1) : '';
+    return `<div class="msg-doc"><div class="msg-doc-icon">📄</div><div class="msg-doc-info"><div class="msg-doc-name">${esc(filename)}</div>${caption?`<div class="msg-doc-caption">${esc(caption)}</div>`:''}</div></div>`;
+  }
+  return `<div class="msg-bubble">${esc(t)}</div>`;
 }
 
 function relTime(date) {

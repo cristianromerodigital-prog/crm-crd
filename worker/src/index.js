@@ -138,11 +138,18 @@ const PDF_BODAS  = 'https://drive.google.com/uc?export=download&confirm=t&id=16g
 const PDF_QUINCE = 'https://drive.google.com/uc?export=download&confirm=t&id=14EL4HQumkWAOVBqjnx3seIqg6YVpXymx';
 
 const PDF_CAPTION = 'Mientras tanto, te envío algunos valores y packs estimados. ¡Tienen una validez de 15 días!';
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+function pdfFilename(type) {
+  const d = new Date();
+  const mes = MESES[d.getMonth()];
+  const anio = d.getFullYear();
+  return `Presupuesto ${type} - ${mes} ${anio}.pdf`;
+}
 
 function getPdfUrl(eventType) {
   const t = (eventType || '').toLowerCase();
-  if (t.includes('15') || t.includes('xv') || t.includes('quince') || t.includes('años')) return { url: PDF_QUINCE, name: 'Presupuesto-15años-CRD.pdf' };
-  if (t.includes('boda') || t.includes('casamiento') || t.includes('matrimonio')) return { url: PDF_BODAS, name: 'Presupuesto-Bodas-CRD.pdf' };
+  if (t.includes('15') || t.includes('xv') || t.includes('quince') || t.includes('años')) return { url: PDF_QUINCE, name: pdfFilename('15 Años') };
+  if (t.includes('boda') || t.includes('casamiento') || t.includes('matrimonio')) return { url: PDF_BODAS, name: pdfFilename('Bodas') };
   return null;
 }
 
@@ -297,7 +304,7 @@ export default {
         const eventType = fresh?.event_type || updates.event_type || '';
         const pdf = getPdfUrl(eventType);
         if (waJid) {
-          const followupText = pdf ? PDF_CAPTION : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
+          const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
           if (pdf) {
             await sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name);
           } else {
@@ -393,7 +400,7 @@ export default {
       if (newStage === 'datos_completos') {
         const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
         const pdf = getPdfUrl(fr?.event_type || upd.event_type || '');
-        const followupText = pdf ? PDF_CAPTION : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
+        const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
         if (pdf) {
           await sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name);
         } else {
