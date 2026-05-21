@@ -970,6 +970,7 @@ async function callAI(leadId, incomingText, waMessageId = null) {
       Object.assign(ld, {
         name:       ex.name        || ld.name,
         eventType:  ex.event_type  || ld.eventType,
+        eventYear:  ex.event_year  || ld.eventYear,
         eventDate:  ex.event_date  || ld.eventDate,
         guests:     ex.guests      || ld.guests,
         venue:      ex.venue       || ld.venue,

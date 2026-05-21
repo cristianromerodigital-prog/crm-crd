@@ -6,11 +6,12 @@ const CORS = {
 
 const BRIDGE_URL = 'https://bridge.cristianromerodigital.ar';
 
-const FIELDS = ['name','event_type','event_date','venue','city','guests','schedule','service','pre_service','honoree_name','couple_names'];
+const FIELDS = ['name','event_type','event_year','event_date','venue','city','guests','schedule','service','pre_service','honoree_name','couple_names'];
 const FIELD_LABELS = {
   name:          'nombre completo',
   event_type:    'tipo de evento (boda, 15 años, corporativo, etc.)',
-  event_date:    'fecha del evento',
+  event_year:    'año del evento',
+  event_date:    'fecha aproximada del evento (día y mes)',
   venue:         'nombre del lugar o salón donde se realiza',
   city:          'localidad o ciudad donde se realiza el evento',
   guests:        'cantidad aproximada de invitados',
@@ -23,6 +24,7 @@ const FIELD_LABELS = {
 const FIELD_WHY = {
   name:          'para personalizar la propuesta',
   event_type:    'porque cada tipo de evento tiene cobertura diferente',
+  event_year:    'para verificar disponibilidad y armar la propuesta correctamente',
   event_date:    'para verificar disponibilidad de Cristian ese día',
   venue:         'para saber si hay traslado incluido en la cotización',
   city:          'para calcular si hay traslado y los costos de movilidad',
@@ -57,6 +59,11 @@ function buildSystemPrompt(lead) {
   const missingDesc  = missing.map(f => `- ${FIELD_LABELS[f]} (${FIELD_WHY[f]})`).join('\n');
   const collectedDesc = Object.entries(collected).map(([f,v]) => `- ${FIELD_LABELS[f]}: ${v}`).join('\n');
 
+  const now = new Date();
+  const MESES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const currentDateStr = `${now.getDate()} de ${MESES_ES[now.getMonth()]} de ${now.getFullYear()}`;
+  const currentYear = now.getFullYear();
+
   return `Sos Ángela, del equipo de Cristian Romero Digital, fotógrafo profesional de eventos sociales en Buenos Aires.
 
 Tu objetivo es recopilar los datos del cliente de forma natural y amigable para que Cristian pueda armar una propuesta personalizada.
@@ -71,6 +78,8 @@ INSTRUCCIONES:
 - Hablá en español rioplatense, tono cálido y cercano, nunca robótico
 - En el primer mensaje saludá con tu nombre sin decir que sos asistente ni nada por el estilo, simplemente "Hola, soy Ángela, del equipo de Cristian"
 - Pedí los datos faltantes de forma natural, de a uno o dos por mensaje como máximo
+- Hoy es ${currentDateStr}. Para el año del evento: "26" = 2026, "el año próximo" = ${currentYear + 1}, "este año" = ${currentYear}. Siempre extraé un año de 4 dígitos.
+- No aceptes fechas de eventos anteriores a hoy. Si el cliente menciona una fecha pasada, aclaráselo amablemente y pedí la fecha correcta.
 - Cuando el cliente no dé un dato, insistí amablemente UNA sola vez explicando el motivo
 - Si el cliente esquiva un dato más de una vez, avanzá con lo que tenés
 - Si el cliente manda un mensaje ofensivo, inapropiado o completamente irrelevante, NO lo tomes como respuesta válida. Respondé con calma, ignorá el contenido ofensivo y repetí la pregunta que estabas haciendo
@@ -85,6 +94,7 @@ FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
   "extracted": {
     "name": null,
     "event_type": null,
+    "event_year": null,
     "event_date": null,
     "venue": null,
     "city": null,
@@ -100,6 +110,19 @@ FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
 
 En "extracted" poné SOLO los valores que el cliente mencionó en ESTE mensaje (null si no los dijo).
 En "stage" SIEMPRE poné un valor: "consultando" mientras seguís recopilando datos, "datos_completos" ÚNICAMENTE cuando ya tenés ABSOLUTAMENTE TODOS los datos faltantes listados arriba.`;
+}
+
+function normalizeEventYear(s) {
+  if (!s) return s;
+  const t = s.toLowerCase().trim();
+  const cy = new Date().getFullYear();
+  if (t === 'este año' || t === 'este') return String(cy);
+  if (t.includes('próximo') || t.includes('proximo') || t.includes('que viene') || t.includes('entrante')) return String(cy + 1);
+  const two = t.match(/^(\d{2})$/);
+  if (two) return String(2000 + parseInt(two[1]));
+  const four = t.match(/\b(20\d{2})\b/);
+  if (four) return four[1];
+  return s;
 }
 
 function normalizeEventType(s) {
@@ -319,6 +342,7 @@ export default {
       const updates = { last_msg_at: Date.now(), followup_due: 0 };
       if (extracted.name         && extracted.name         !== 'null') updates.name         = extracted.name;
       if (extracted.event_type   && extracted.event_type   !== 'null') updates.event_type   = normalizeEventType(extracted.event_type);
+      if (extracted.event_year   && extracted.event_year   !== 'null') updates.event_year   = normalizeEventYear(extracted.event_year);
       if (extracted.event_date   && extracted.event_date   !== 'null') updates.event_date   = extracted.event_date;
       if (extracted.venue        && extracted.venue        !== 'null') updates.venue        = extracted.venue;
       if (extracted.city         && extracted.city         !== 'null') updates.city         = extracted.city;
@@ -380,7 +404,7 @@ export default {
       if (!lead) {
         const newId = 'wa_' + Date.now();
         const t = Date.now();
-        const phone = waJid.split('@')[0];
+        const phone = waJid.endsWith('@s.whatsapp.net') ? waJid.split('@')[0] : '';
         await env.DB.prepare(
           `INSERT INTO leads (id,salon,name,phone,wa_jid,source,stage,guests,notes,last_message,created_at,updated_at)
            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
@@ -424,6 +448,7 @@ export default {
       const upd = { last_msg_at: Date.now(), followup_due: 0 };
       if (extracted.name         && extracted.name         !== 'null') upd.name         = extracted.name;
       if (extracted.event_type   && extracted.event_type   !== 'null') upd.event_type   = normalizeEventType(extracted.event_type);
+      if (extracted.event_year   && extracted.event_year   !== 'null') upd.event_year   = normalizeEventYear(extracted.event_year);
       if (extracted.event_date   && extracted.event_date   !== 'null') upd.event_date   = extracted.event_date;
       if (extracted.venue        && extracted.venue        !== 'null') upd.venue        = extracted.venue;
       if (extracted.city         && extracted.city         !== 'null') upd.city         = extracted.city;
