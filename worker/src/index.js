@@ -180,7 +180,7 @@ async function callOpenAI(env, messages) {
 async function resolvePhone(waJid) {
   try {
     const res = await fetch(`${BRIDGE_URL}/api/resolve-phone?jid=${encodeURIComponent(waJid)}`, {
-      signal: AbortSignal.timeout(4000),
+      signal: AbortSignal.timeout(1500),
     });
     if (!res.ok) return '';
     const data = await res.json();
@@ -227,7 +227,7 @@ function getPdfUrl(eventType) {
 
 export default {
   // ── HTTP handler ──────────────────────────────────────────
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') return new Response(null, { headers: CORS });
 
     const url    = new URL(request.url);
@@ -374,28 +374,30 @@ export default {
         'INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)'
       ).bind(leadId, 'out', reply, 'Ángela', Date.now(), waMessageId || null).run();
 
-      // Si completó datos, enviar PDF y pasar a presupuesto_enviado
       if (newStage === 'datos_completos') {
-        const fresh = await env.DB.prepare('SELECT wa_jid, event_type FROM leads WHERE id = ?').bind(leadId).first();
-        const waJid = fresh?.wa_jid || lead.wa_jid || '';
-        const eventType = fresh?.event_type || updates.event_type || '';
-        if (!eventType) {
-          // AI declaró datos_completos sin event_type — rechazar y seguir consultando
-          await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
-            .bind('consultando', Date.now(), leadId).run();
-        } else if (waJid) {
+        const cLeadId = leadId, cLead = lead, cUpdates = updates;
+        ctx.waitUntil((async () => {
+          const fresh = await env.DB.prepare('SELECT wa_jid, event_type FROM leads WHERE id = ?').bind(cLeadId).first();
+          const wJid = fresh?.wa_jid || cLead.wa_jid || '';
+          const eventType = fresh?.event_type || cUpdates.event_type || '';
+          if (!eventType) {
+            await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
+              .bind('consultando', Date.now(), cLeadId).run();
+            return;
+          }
+          if (!wJid) return;
           const pdf = getPdfUrl(eventType);
           const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
           if (pdf) {
-            await sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name);
+            await sendWA(wJid, PDF_CAPTION, pdf.url, pdf.name);
           } else {
-            await sendWA(waJid, followupText);
+            await sendWA(wJid, followupText);
           }
           await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId, 'out', followupText, 'Ángela', Date.now()).run();
+            .bind(cLeadId, 'out', followupText, 'Ángela', Date.now()).run();
           await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
-            .bind('presupuesto_enviado', Date.now(), leadId).run();
-        }
+            .bind('presupuesto_enviado', Date.now(), cLeadId).run();
+        })());
       }
 
       return json({ reply, extracted: updates, stage: newStage });
@@ -490,25 +492,29 @@ export default {
       await sendWA(waJid, reply);
 
       if (newStage === 'datos_completos') {
-        const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
-        const eventType = fr?.event_type || upd.event_type || '';
-        if (!eventType) {
-          // AI declaró datos_completos sin event_type — rechazar y seguir consultando
-          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
-            .bind('consultando', Date.now(), leadId).run();
-        } else {
+        const capturedJid = waJid;
+        const capturedLeadId = leadId;
+        const capturedEventType = upd.event_type || '';
+        ctx.waitUntil((async () => {
+          const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(capturedLeadId).first();
+          const eventType = fr?.event_type || capturedEventType;
+          if (!eventType) {
+            await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
+              .bind('consultando', Date.now(), capturedLeadId).run();
+            return;
+          }
           const pdf = getPdfUrl(eventType);
           const followupText = pdf ? `📎 ${pdf.name}\n${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. ¡Gracias por tu consulta! 😊';
           if (pdf) {
-            await sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name);
+            await sendWA(capturedJid, PDF_CAPTION, pdf.url, pdf.name);
           } else {
-            await sendWA(waJid, followupText);
+            await sendWA(capturedJid, followupText);
           }
           await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId,'out',followupText,'Ángela',Date.now()).run();
+            .bind(capturedLeadId,'out',followupText,'Ángela',Date.now()).run();
           await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
-            .bind('presupuesto_enviado', Date.now(), leadId).run();
-        }
+            .bind('presupuesto_enviado', Date.now(), capturedLeadId).run();
+        })());
       }
       return json({ ok: true, reply });
     }
