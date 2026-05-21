@@ -305,7 +305,7 @@ select.info-input option{background:#fff}
     <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V2.26</div>
+    <div class="login-version">V2.32</div>
     <div id="demoHint" style="display:none;margin-top:20px;padding:12px;background:#1e293b;border-radius:8px;font-size:12px;color:#94a3b8;text-align:left;line-height:1.8">
       <strong style="color:#c9a84c">Modo Demo</strong><br>
       nico@crm.com &nbsp;&nbsp;&nbsp;/ palacio123<br>
@@ -325,7 +325,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.26</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.32</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -1109,6 +1109,7 @@ function setSalon(salon) {
 // ════════════════════════════════════════════════════════════
 // KANBAN RENDER
 // ════════════════════════════════════════════════════════════
+// [COMPARTIDA] — llamada desde startApp, setSalon, adminSaveStages. Crea DOM col-{id}/cnt-{id} que usa renderCards.
 function renderKanban() {
   const kb = document.getElementById('kanban');
   kb.innerHTML = STAGES.map(s => `
@@ -1161,6 +1162,7 @@ function updateActivePip() {
   });
 }
 
+// [COMPARTIDA] — 11 callers (subscribeLeads, processIncomingWAMessage, adminSaveStages, demo, etc). Depende del DOM de renderKanban.
 function renderCards() {
   STAGES.forEach(s => {
     const col = document.getElementById('col-' + s.id);
@@ -1294,6 +1296,7 @@ async function updateLeadStage(leadId, stageId) {
 // ════════════════════════════════════════════════════════════
 // PANEL
 // ════════════════════════════════════════════════════════════
+// [COMPARTIDA] — buildCard onclick, createLead, y override demo en línea ~1825 (_openLeadOrig). Cambiar firma rompe el override.
 function openLead(id) {
   currentLeadId = id;
   const lead = leadsData[id];
@@ -1306,6 +1309,7 @@ function openLead(id) {
   document.getElementById('leadPanel').classList.add('open');
 }
 
+// [COMPARTIDA] — 5 callers: subscribeLeads (x3), openLead, openLead-demo.
 function updatePanelHead(lead) {
   const stage = STAGES.find(s => s.id === lead.stage) || STAGES[0];
   const srcClass = 'source-' + (lead.source||'wa');
@@ -1325,6 +1329,7 @@ function closePanel() {
   currentLeadId = null;
 }
 
+// [COMPARTIDA] — onclick HTML (4 tabs) + openLead, copyTemplate, openLead-demo.
 function switchTab(tab) {
   ['chat','info','tasks','templates'].forEach(t => {
     const el = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
