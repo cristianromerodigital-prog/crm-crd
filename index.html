@@ -841,7 +841,7 @@ function startChatRefresh(leadId) {
   if (_chatRefreshInterval) clearInterval(_chatRefreshInterval);
   _chatRefreshInterval = setInterval(() => {
     if (currentLeadId === leadId) apiLoadLeadAndRefresh(leadId);
-  }, 7000);
+  }, 4000);
 }
 function stopChatRefresh() {
   if (_chatRefreshInterval) { clearInterval(_chatRefreshInterval); _chatRefreshInterval = null; }
