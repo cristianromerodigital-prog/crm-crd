@@ -450,8 +450,29 @@ export default {
 
       // Llamar al AI
       const freshLead = (await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(leadId).first()) || {};
-      const doneStages = ['datos_completos','presupuesto_enviado','contrato_pendiente','cliente_confirmado','lead_perdido'];
+
+      // datos_completos: cliente respondio a la pregunta de entrevista → enviar PDF ahora
+      if (freshLead.stage === 'datos_completos') {
+        const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
+        const eventType = fr?.event_type || '';
+        if (eventType) {
+          const pdf = getPdfUrl(eventType);
+          const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
+          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+            .bind(leadId,'out',followupText,'Angela',Date.now()).run();
+          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
+            .bind('presupuesto_enviado', Date.now(), leadId).run();
+          ctx.waitUntil(pdf
+            ? sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name)
+            : sendWA(waJid, followupText));
+        }
+        return json({ ok: true });
+      }
+
+      // presupuesto_enviado o posterior: Cristian toma el control, Angela no responde
+      const doneStages = ['presupuesto_enviado','contrato_pendiente','cliente_confirmado','lead_perdido'];
       if (doneStages.includes(freshLead.stage || '')) return json({ ok: true });
+
       const sysPrompt = buildSystemPrompt(freshLead);
       const aiMessages = [
         { role:'system', content: sysPrompt },
@@ -498,17 +519,8 @@ export default {
         if (!eventType) {
           await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
             .bind('consultando', Date.now(), leadId).run();
-        } else {
-          const pdf = getPdfUrl(eventType);
-          const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
-          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId,'out',followupText,'Angela',Date.now()).run();
-          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
-            .bind('presupuesto_enviado', Date.now(), leadId).run();
-          ctx.waitUntil(pdf
-            ? sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name)
-            : sendWA(waJid, followupText));
         }
+        // si hay event_type: se queda en datos_completos; PDF se envía cuando el cliente responda
       }
       return json({ ok: true, reply });
     }
