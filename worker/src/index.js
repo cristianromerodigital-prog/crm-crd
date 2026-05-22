@@ -451,25 +451,7 @@ export default {
       // Llamar al AI
       const freshLead = (await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(leadId).first()) || {};
 
-      // datos_completos: cliente respondio a la pregunta de entrevista → enviar PDF ahora
-      if (freshLead.stage === 'datos_completos') {
-        const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
-        const eventType = fr?.event_type || '';
-        if (eventType) {
-          const pdf = getPdfUrl(eventType);
-          const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
-          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId,'out',followupText,'Angela',Date.now()).run();
-          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
-            .bind('presupuesto_enviado', Date.now(), leadId).run();
-          ctx.waitUntil(pdf
-            ? sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name)
-            : sendWA(waJid, followupText));
-        }
-        return json({ ok: true });
-      }
-
-      // presupuesto_enviado o posterior: Cristian toma el control, Angela no responde
+      // presupuesto_enviado o posterior: Angela no responde, Cristian toma el control
       const doneStages = ['presupuesto_enviado','contrato_pendiente','cliente_confirmado','lead_perdido'];
       if (doneStages.includes(freshLead.stage || '')) return json({ ok: true });
 
@@ -508,20 +490,39 @@ export default {
       await env.DB.prepare(`UPDATE leads SET ${setCls},updated_at=? WHERE id=?`)
         .bind(...Object.values(upd),Date.now(),leadId).run();
 
-      // Guardar reply y enviar
-      await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
-        .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
-      await sendWA(waJid, reply);
-
       if (newStage === 'datos_completos') {
         const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
         const eventType = fr?.event_type || upd.event_type || '';
         if (!eventType) {
+          // Sin event_type: revertir para que el bot siga preguntando
           await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
             .bind('consultando', Date.now(), leadId).run();
+          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
+            .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
+          ctx.waitUntil(sendWA(waJid, reply));
+        } else {
+          const pdf = getPdfUrl(eventType);
+          const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
+          // ATÓMICO: presupuesto_enviado ANTES de enviar — bloquea cualquier mensaje concurrente
+          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
+            .bind('presupuesto_enviado', Date.now(), leadId).run();
+          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
+            .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
+          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+            .bind(leadId,'out',followupText,'Angela',Date.now()).run();
+          // Enviar resumen + PDF en background (después de retornar la respuesta al bridge)
+          ctx.waitUntil((async () => {
+            await sendWA(waJid, reply);
+            await (pdf ? sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name) : sendWA(waJid, followupText));
+          })());
         }
-        // si hay event_type: se queda en datos_completos; PDF se envía cuando el cliente responda
+        return json({ ok: true, reply });
       }
+
+      // Mensaje normal (consultando): guardar y enviar
+      await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
+        .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
+      await sendWA(waJid, reply);
       return json({ ok: true, reply });
     }
 
