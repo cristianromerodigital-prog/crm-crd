@@ -37,6 +37,22 @@ const FIELD_WHY = {
 };
 
 function buildSystemPrompt(lead) {
+  if (lead.stage === 'presupuesto_enviado') {
+    return `Sos Ángela, del equipo de Cristian Romero Digital. Ya le enviaste al cliente el presupuesto con los valores estimados. Ahora tu único objetivo es coordinar una entrevista entre el cliente y Cristian para conocerse y ajustar los detalles del evento.
+
+INSTRUCCIONES:
+- Si el cliente muestra interés en reunirse: preguntale qué días y horarios le quedan bien
+- Si ya propone fecha y horario concretos: confirmásela y cerrá cordialmente indicando que Cristian va a estar confirmando
+- Si dice que NO quiere, no puede, ya tiene fotógrafo, u otro motivo de rechazo: agradecele su tiempo, decile que puede escribir cuando quiera y despedite. No insistas.
+- Si responde algo no relacionado o esquivo: reencaminá amablemente la conversación hacia la entrevista
+- Hablá en español rioplatense, tono cálido y natural. Máximo 3 oraciones.
+
+FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
+{"reply":"texto para el cliente","stage":"presupuesto_enviado"}
+
+En "stage": "presupuesto_enviado" mientras coordinás (sin fecha confirmada), "reunion_programada" SOLO cuando el cliente confirmó fecha y horario concretos, "indeciso" cuando rechazó la reunión por cualquier motivo.`;
+  }
+
   const collected = {};
   for (const f of FIELDS) {
     const val = lead[f] || lead[f.replace('_','')];
@@ -84,7 +100,7 @@ INSTRUCCIONES:
 - Si el cliente manda un mensaje ofensivo, inapropiado o completamente irrelevante, NO lo tomes como respuesta válida. Respondé con calma, ignorá el contenido ofensivo y repetí la pregunta que estabas haciendo
 - NUNCA menciones precios — Cristian los manda personalmente
 - NUNCA inventes información sobre servicios, packs o disponibilidad
-- Cuando todos los datos estén completos, avisale que Cristian le va a hacer llegar una propuesta personalizada y que lo ideal sería poder coordinar una entrevista para conocerse y terminar de ajustar los detalles
+- Cuando todos los datos estén completos, avisale que Cristian le va a estar enviando una propuesta personalizada y que en breve le van a hacer llegar los valores estimados de referencia
 - Máximo 3 oraciones por mensaje, texto corrido sin listas
 
 FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
@@ -215,6 +231,7 @@ const PDF_BODAS_VIEW  = 'https://drive.google.com/file/d/16gSQoRAa5Ao5whsbuoP7uT
 const PDF_QUINCE_VIEW = 'https://drive.google.com/file/d/14EL4HQumkWAOVBqjnx3seIqg6YVpXymx/view';
 
 const PDF_CAPTION = 'Mientras tanto te envio algunos valores y packs estimados. Tienen una validez de 15 dias.';
+const MEETING_Q = 'Por otro lado, nos gustaria que puedas conocer a Cristian personalmente para terminar de ajustar todos los detalles de tu evento. Te gustaria coordinar una entrevista?';
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 function pdfFilename(type) {
   const d = new Date();
@@ -391,11 +408,13 @@ export default {
           const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
           await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
             .bind(leadId, 'out', followupText, 'Angela', Date.now()).run();
+          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+            .bind(leadId, 'out', MEETING_Q, 'Ángela', Date.now()).run();
           await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
             .bind('presupuesto_enviado', Date.now(), leadId).run();
           if (wJid) ctx.waitUntil(pdf
-            ? sendWA(wJid, PDF_CAPTION, pdf.url, pdf.name)
-            : sendWA(wJid, followupText));
+            ? (async () => { await sendWA(wJid, PDF_CAPTION, pdf.url, pdf.name); await sendWA(wJid, MEETING_Q); })()
+            : (async () => { await sendWA(wJid, followupText); await sendWA(wJid, MEETING_Q); })());
         }
       }
 
@@ -452,7 +471,7 @@ export default {
       const freshLead = (await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(leadId).first()) || {};
 
       // presupuesto_enviado o posterior: Angela no responde, Cristian toma el control
-      const doneStages = ['presupuesto_enviado','contrato_pendiente','cliente_confirmado','lead_perdido'];
+      const doneStages = ['reunion_programada','indeciso','contrato_pendiente','cliente_confirmado','lead_perdido'];
       if (doneStages.includes(freshLead.stage || '')) return json({ ok: true });
 
       const sysPrompt = buildSystemPrompt(freshLead);
@@ -510,10 +529,12 @@ export default {
             .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
           await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
             .bind(leadId,'out',followupText,'Angela',Date.now()).run();
-          // Enviar resumen + PDF en background (después de retornar la respuesta al bridge)
+          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+            .bind(leadId,'out',MEETING_Q,'Ángela',Date.now()).run();
           ctx.waitUntil((async () => {
             await sendWA(waJid, reply);
             await (pdf ? sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name) : sendWA(waJid, followupText));
+            await sendWA(waJid, MEETING_Q);
           })());
         }
         return json({ ok: true, reply });
@@ -532,8 +553,8 @@ export default {
   // ── Cron: follow-up semanal ───────────────────────────────
   async scheduled(event, env) {
     const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    const skipStages = ['datos_completos','presupuesto_enviado','contrato_pendiente',
-                        'cliente_confirmado','lead_perdido'];
+    const skipStages = ['datos_completos','presupuesto_enviado','reunion_programada','indeciso',
+                        'contrato_pendiente','cliente_confirmado','lead_perdido'];
 
     const { results } = await env.DB.prepare(
       `SELECT * FROM leads

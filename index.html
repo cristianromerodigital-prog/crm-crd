@@ -305,7 +305,7 @@ select.info-input option{background:#fff}
     <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V2.36</div>
+    <div class="login-version">V2.42</div>
     <div id="demoHint" style="display:none;margin-top:20px;padding:12px;background:#1e293b;border-radius:8px;font-size:12px;color:#94a3b8;text-align:left;line-height:1.8">
       <strong style="color:#c9a84c">Modo Demo</strong><br>
       nico@crm.com &nbsp;&nbsp;&nbsp;/ palacio123<br>
@@ -325,7 +325,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.36</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V2.42</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -930,6 +930,7 @@ async function startApp() {
   buildStageSelect('newStage');
   buildTemplates();
   startWAPolling();
+  startLeadsPolling();
 }
 
 async function callAI(leadId, incomingText, waMessageId = null) {
@@ -1001,6 +1002,43 @@ async function callAI(leadId, incomingText, waMessageId = null) {
   } catch(e) { console.error('AI call failed', e); }
 }
 
+
+function startLeadsPolling() {
+  setInterval(async () => {
+    try {
+      const r = await fetch(API_URL + '/leads');
+      if (!r.ok) return;
+      const apiLeads = await r.json();
+      let changed = false;
+      apiLeads.forEach(l => {
+        const cur = leadsData[l.id];
+        if (!cur) return;
+        const newStage = l.stage;
+        const newLast  = l.last_message;
+        const newTs    = l.updated_at;
+        if (cur.stage !== newStage || cur.lastMessage !== newLast || cur._ts !== newTs) {
+          cur.stage       = newStage;
+          cur.lastMessage = newLast;
+          cur._ts         = newTs;
+          cur.updatedAt   = { toDate: () => new Date(l.updated_at), seconds: l.updated_at / 1000 };
+          cur.name        = l.name || cur.name;
+          cur.eventType   = normalizeEventTypeUI(l.event_type) || cur.eventType;
+          cur.eventYear   = l.event_year || cur.eventYear;
+          cur.eventDate   = l.event_date || cur.eventDate;
+          cur.venue       = l.venue || cur.venue;
+          cur.city        = l.city || cur.city;
+          cur.guests      = l.guests || cur.guests;
+          cur.schedule    = l.schedule || cur.schedule;
+          cur.service     = l.service || cur.service;
+          cur.preService  = l.pre_service || cur.preService;
+          changed = true;
+          if (currentLeadId === l.id) updatePanelHead(cur);
+        }
+      });
+      if (changed) renderCards();
+    } catch(_) {}
+  }, 10000);
+}
 
 function startWAPolling() {
   setInterval(async () => {
