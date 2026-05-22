@@ -547,6 +547,41 @@ export default {
       return json({ ok: true, reply });
     }
 
+    // GET /leads/stream — SSE en tiempo real
+    if (method === 'GET' && path === '/leads/stream') {
+      const since = parseInt(url.searchParams.get('since') || '0') || (Date.now() - 60000);
+      const { readable, writable } = new TransformStream();
+      const writer = writable.getWriter();
+      const enc = new TextEncoder();
+      ctx.waitUntil((async () => {
+        let lastTs = since;
+        try {
+          for (let i = 0; i < 12; i++) {
+            await new Promise(r => setTimeout(r, 2000));
+            const { results } = await env.DB.prepare(
+              'SELECT * FROM leads WHERE updated_at > ? ORDER BY updated_at DESC LIMIT 50'
+            ).bind(lastTs).all();
+            if (results.length > 0) {
+              lastTs = Math.max(...results.map(l => l.updated_at));
+              for (const lead of results) {
+                await writer.write(enc.encode(`data: ${JSON.stringify(lead)}\n\n`));
+              }
+            } else {
+              await writer.write(enc.encode(': ping\n\n'));
+            }
+          }
+        } catch(e) { console.error('SSE error', e); }
+        await writer.close().catch(() => {});
+      })());
+      return new Response(readable, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
     return json({ error: 'Not found' }, 404);
   },
 
