@@ -1896,6 +1896,21 @@ function esc(s) {
 }
 function renderMsgBubble(text) {
   const t = String(text||'');
+  if (t.startsWith('pdf:')) {
+    const rest = t.slice(4);
+    const i1 = rest.indexOf('|'), i2 = i1 > -1 ? rest.indexOf('|', i1 + 1) : -1;
+    const url      = i1 > -1 ? rest.slice(0, i1) : '';
+    const filename = i1 > -1 ? (i2 > -1 ? rest.slice(i1 + 1, i2) : rest.slice(i1 + 1)) : 'presupuesto.pdf';
+    const caption  = i2 > -1 ? rest.slice(i2 + 1) : '';
+    const nameHtml = url ? `<a href="${url}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(filename)}</a>` : esc(filename);
+    return `<div class="msg-doc"><div class="msg-doc-icon">📄</div><div class="msg-doc-info"><div class="msg-doc-name">${nameHtml}</div>${caption?`<div class="msg-doc-caption">${esc(caption)}</div>`:''}</div></div>`;
+  }
+  if (t.match(/^.+?\.pdf - .+$/is)) {
+    const dash = t.indexOf('.pdf - ');
+    const filename = t.slice(0, dash + 4);
+    const caption  = t.slice(dash + 7);
+    return `<div class="msg-doc"><div class="msg-doc-icon">📄</div><div class="msg-doc-info"><div class="msg-doc-name">${esc(filename)}</div><div class="msg-doc-caption">${esc(caption)}</div></div></div>`;
+  }
   if (t.startsWith('📎 ')) {
     const nl = t.indexOf('\n');
     const filename = nl > 0 ? t.slice(3, nl) : t.slice(3);

@@ -211,6 +211,8 @@ async function sendWA(waJid, message, mediaUrl = null, filename = null) {
 
 const PDF_BODAS  = 'https://drive.google.com/uc?export=download&confirm=t&id=16gSQoRAa5Ao5whsbuoP7uT1v2ioOE0lH';
 const PDF_QUINCE = 'https://drive.google.com/uc?export=download&confirm=t&id=14EL4HQumkWAOVBqjnx3seIqg6YVpXymx';
+const PDF_BODAS_VIEW  = 'https://drive.google.com/file/d/16gSQoRAa5Ao5whsbuoP7uT1v2ioOE0lH/view';
+const PDF_QUINCE_VIEW = 'https://drive.google.com/file/d/14EL4HQumkWAOVBqjnx3seIqg6YVpXymx/view';
 
 const PDF_CAPTION = 'Mientras tanto te envio algunos valores y packs estimados. Tienen una validez de 15 dias.';
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -223,8 +225,8 @@ function pdfFilename(type) {
 
 function getPdfUrl(eventType) {
   const t = (eventType || '').toLowerCase();
-  if (t.includes('15') || t.includes('xv') || t.includes('quince') || t.includes('años')) return { url: PDF_QUINCE, name: pdfFilename('15 Anos') };
-  if (t.includes('boda') || t.includes('casamiento') || t.includes('matrimonio')) return { url: PDF_BODAS, name: pdfFilename('Bodas') };
+  if (t.includes('15') || t.includes('xv') || t.includes('quince') || t.includes('años')) return { url: PDF_QUINCE, viewUrl: PDF_QUINCE_VIEW, name: pdfFilename('15 Anos') };
+  if (t.includes('boda') || t.includes('casamiento') || t.includes('matrimonio')) return { url: PDF_BODAS, viewUrl: PDF_BODAS_VIEW, name: pdfFilename('Bodas') };
   return null;
 }
 
@@ -386,7 +388,7 @@ export default {
             .bind('consultando', Date.now(), leadId).run();
         } else {
           const pdf = getPdfUrl(eventType);
-          const followupText = pdf ? `${pdf.name} - ${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
+          const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
           await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
             .bind(leadId, 'out', followupText, 'Angela', Date.now()).run();
           await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
@@ -496,7 +498,7 @@ export default {
             .bind('consultando', Date.now(), leadId).run();
         } else {
           const pdf = getPdfUrl(eventType);
-          const followupText = pdf ? `${pdf.name} - ${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
+          const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
           await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
             .bind(leadId,'out',followupText,'Angela',Date.now()).run();
           await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
