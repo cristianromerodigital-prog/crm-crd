@@ -81,6 +81,7 @@ header{display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;backg
 .source-ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff}
 .source-fb{background:#1877f2;color:#fff}
 .card-name{font-size:13px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.card-crd{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;white-space:nowrap}
 .card-event{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .card-event span{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-weight:600}
 .card-preview{font-size:11px;color:var(--subtle);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -305,7 +306,7 @@ select.info-input option{background:#fff}
     <input type="password" id="loginPass" placeholder="Contraseña" autocomplete="current-password"/>
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-error" id="loginErr"></div>
-    <div class="login-version">V3.0</div>
+    <div class="login-version">V3.1</div>
     <div id="demoHint" style="display:none;margin-top:20px;padding:12px;background:#1e293b;border-radius:8px;font-size:12px;color:#94a3b8;text-align:left;line-height:1.8">
       <strong style="color:#c9a84c">Modo Demo</strong><br>
       nico@crm.com &nbsp;&nbsp;&nbsp;/ palacio123<br>
@@ -325,7 +326,7 @@ select.info-input option{background:#fff}
   <header>
     <div class="logo" style="font-size:14px;letter-spacing:.5px;display:flex;flex-direction:column;line-height:1.1">
       <span style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;letter-spacing:3px;color:var(--text)">CRISTIAN ROMERO <span style="color:var(--accent)">DIGITAL</span></span>
-      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V3.0</span>
+      <span style="font-size:9px;font-weight:500;color:var(--muted);letter-spacing:2px">FOTOGRAFÍA · CRM &nbsp; V3.1</span>
     </div>
     <div class="salon-tabs">
       <button class="salon-tab active" data-salon="todos" onclick="setSalon('todos')">Todos</button><button class="salon-tab" data-salon="boda" onclick="setSalon('boda')">💍 Bodas</button><button class="salon-tab" data-salon="quince" onclick="setSalon('quince')">🎀 15 años</button><button class="salon-tab" data-salon="otros" onclick="setSalon('otros')">📸 Otros</button>
@@ -910,7 +911,7 @@ async function startApp() {
           waJid: l.wa_jid, source: l.source, eventType: normalizeEventTypeUI(l.event_type),
           eventYear: l.event_year, eventDate: l.event_date, stage: l.stage, guests: l.guests,
           venue: l.venue, city: l.city, schedule: l.schedule, service: l.service, preService: l.pre_service,
-          honoreeName: l.honoree_name, coupleNames: l.couple_names,
+          honoreeName: l.honoree_name, coupleNames: l.couple_names, crdId: l.crd_id || '',
           notes: l.notes, lastMessage: l.last_message, _ts: l.updated_at,
           updatedAt: { toDate: () => new Date(l.updated_at), seconds: l.updated_at/1000 }
         };
@@ -1032,6 +1033,7 @@ function startLeadsSSE() {
         cur.schedule    = l.schedule || cur.schedule;
         cur.service     = l.service || cur.service;
         cur.preService  = l.pre_service || cur.preService;
+        if (l.crd_id) cur.crdId = l.crd_id;
         renderCards();
         if (currentLeadId === l.id) updatePanelHead(cur);
       } catch(_) {}
@@ -1240,6 +1242,7 @@ function buildCard(lead) {
     <div class="card-top">
       <div class="source-icon ${srcClass}">${srcIcon}</div>
       <div class="card-name">${esc(lead.name||'Sin nombre')}</div>
+      ${lead.crdId ? `<div class="card-crd">${esc(lead.crdId)}</div>` : ''}
     </div>
     ${eventInfo ? `<div class="card-event"><span>${esc(eventInfo)}</span></div>` : ''}
     <div class="card-preview">${esc(preview)}</div>
@@ -1360,7 +1363,7 @@ function updatePanelHead(lead) {
   const srcClass = 'source-' + (lead.source||'wa');
   document.getElementById('panelSource').className = 'panel-source ' + srcClass;
   document.getElementById('panelSource').textContent = sourceIcon(lead.source);
-  document.getElementById('panelName').textContent = lead.name || 'Sin nombre';
+  document.getElementById('panelName').textContent = (lead.crdId ? lead.crdId + ' · ' : '') + (lead.name || 'Sin nombre');
   const sel = document.getElementById('panelStageSel');
   sel.textContent = stage.label;
   sel.style.background = stage.color;

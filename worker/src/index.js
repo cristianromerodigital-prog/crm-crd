@@ -5,6 +5,7 @@ const CORS = {
 };
 
 const BRIDGE_URL = 'https://bridge.cristianromerodigital.ar';
+const CRISTIAN_JID = '5491162557763@s.whatsapp.net';
 
 const FIELDS = ['name','event_type','event_year','event_date','venue','city','guests','schedule','service','pre_service','honoree_name','couple_names'];
 const FIELD_LABELS = {
@@ -163,6 +164,14 @@ function normalizeService(s) {
   if (t.includes('foto'))  return 'Foto';
   if (t.includes('video')) return 'Video';
   return s;
+}
+
+async function generateCrdId(db) {
+  const row = await db.prepare(
+    "SELECT MAX(CAST(SUBSTR(crd_id, 4) AS INTEGER)) as maxid FROM leads WHERE crd_id LIKE 'CRD%'"
+  ).first();
+  const next = (row?.maxid || 6009) + 1;
+  return 'CRD' + String(next).padStart(5, '0');
 }
 
 function buildFollowupMsg(lead) {
@@ -440,11 +449,12 @@ export default {
       if (!lead) {
         const newId = 'wa_' + Date.now();
         const t = Date.now();
+        const crdId = await generateCrdId(env.DB);
         await env.DB.prepare(
-          `INSERT INTO leads (id,salon,name,phone,wa_jid,source,stage,guests,notes,last_message,created_at,updated_at)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
-        ).bind(newId,'otros',pushName||'',resolvedPhone,waJid,'whatsapp','nuevo_lead',0,'',message,t,t).run();
-        lead = { id: newId, wa_jid: waJid, name: pushName||'', phone: resolvedPhone };
+          `INSERT INTO leads (id,salon,name,phone,wa_jid,source,stage,guests,notes,last_message,created_at,updated_at,crd_id)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`
+        ).bind(newId,'otros',pushName||'',resolvedPhone,waJid,'whatsapp','nuevo_lead',0,'',message,t,t,crdId).run();
+        lead = { id: newId, wa_jid: waJid, name: pushName||'', phone: resolvedPhone, crd_id: crdId };
       } else if (!lead.phone && resolvedPhone) {
         await env.DB.prepare('UPDATE leads SET phone = ?, updated_at = ? WHERE id = ?')
           .bind(resolvedPhone, Date.now(), lead.id).run();
@@ -520,10 +530,30 @@ export default {
           .bind(leadId,'out',followupText,'Angela',Date.now()).run();
         await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
           .bind(leadId,'out',MEETING_Q,'Ángela',Date.now()).run();
+        const fullLead = await env.DB.prepare('SELECT * FROM leads WHERE id=?').bind(leadId).first();
+        const crdId  = fullLead?.crd_id || freshLead.crd_id || lead.crd_id || '';
+        const lName  = fullLead?.name || '';
+        const lPhone = fullLead?.phone || resolvedPhone || waJid.split('@')[0];
+        const cristNotif = [
+          `Lead ${crdId} - presupuesto enviado`,
+          ``,
+          `Nombre: ${lName || '-'}`,
+          `Tel: ${lPhone || '-'}`,
+          `Evento: ${fullLead?.event_type || '-'} ${fullLead?.event_year || ''}`.trim(),
+          `Fecha: ${fullLead?.event_date || '-'}`,
+          `Lugar: ${fullLead?.venue || '-'}${fullLead?.city ? ' (' + fullLead.city + ')' : ''}`,
+          `Invitados: ${fullLead?.guests || '-'}`,
+          `Horario: ${fullLead?.schedule || '-'}`,
+          `Servicio: ${fullLead?.service || '-'}`,
+          `Pre: ${fullLead?.pre_service || '-'}`,
+          ``,
+          `En espera de que lo contactemos.`
+        ].join('\n');
         ctx.waitUntil((async () => {
           await sendWA(waJid, reply);
           await (pdf ? sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name) : sendWA(waJid, followupText));
           await sendWA(waJid, MEETING_Q);
+          await sendWA(CRISTIAN_JID, cristNotif);
         })());
         return json({ ok: true, reply });
       }
@@ -532,6 +562,16 @@ export default {
       await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
         .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
       await sendWA(waJid, reply);
+
+      // Notificar a Cristian cuando el lead pasa de nuevo_lead a consultando (primera vez)
+      if (newStage === 'consultando' && freshLead.stage === 'nuevo_lead') {
+        const crdId = freshLead.crd_id || lead.crd_id || '';
+        const name  = upd.name || freshLead.name || pushName || '';
+        const phone = freshLead.phone || resolvedPhone || waJid.split('@')[0];
+        const notif = `Nuevo lead ${crdId}\nNombre: ${name || 'sin nombre'}\nTel: ${phone}`;
+        ctx.waitUntil(sendWA(CRISTIAN_JID, notif));
+      }
+
       return json({ ok: true, reply });
     }
 
