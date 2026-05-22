@@ -355,7 +355,7 @@ export default {
       // Actualizar lead con campos extraídos + last_msg_at
       const updates = { last_msg_at: Date.now(), followup_due: 0 };
       if (extracted.name         && extracted.name         !== 'null') updates.name         = extracted.name;
-      if (extracted.event_type   && extracted.event_type   !== 'null') updates.event_type   = normalizeEventType(extracted.event_type);
+      if (extracted.event_type   && extracted.event_type   !== 'null') { const ne = normalizeEventType(extracted.event_type); if (ne) updates.event_type = ne; }
       if (extracted.event_year   && extracted.event_year   !== 'null') updates.event_year   = normalizeEventYear(extracted.event_year);
       if (extracted.event_date   && extracted.event_date   !== 'null') updates.event_date   = extracted.event_date;
       if (extracted.venue        && extracted.venue        !== 'null') updates.venue        = extracted.venue;
@@ -467,7 +467,7 @@ export default {
       const newStage = parsed.stage || null;
       const upd = { last_msg_at: Date.now(), followup_due: 0 };
       if (extracted.name         && extracted.name         !== 'null') upd.name         = extracted.name;
-      if (extracted.event_type   && extracted.event_type   !== 'null') upd.event_type   = normalizeEventType(extracted.event_type);
+      if (extracted.event_type   && extracted.event_type   !== 'null') { const ne = normalizeEventType(extracted.event_type); if (ne) upd.event_type = ne; }
       if (extracted.event_year   && extracted.event_year   !== 'null') upd.event_year   = normalizeEventYear(extracted.event_year);
       if (extracted.event_date   && extracted.event_date   !== 'null') upd.event_date   = extracted.event_date;
       if (extracted.venue        && extracted.venue        !== 'null') upd.venue        = extracted.venue;
