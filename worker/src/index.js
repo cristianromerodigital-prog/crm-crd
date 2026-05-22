@@ -190,6 +190,7 @@ async function callOpenAI(env, messages) {
       messages,
       max_tokens: 800,
       temperature: 0.7,
+      response_format: { type: 'json_object' },
     }),
   });
   const data = await res.json();
