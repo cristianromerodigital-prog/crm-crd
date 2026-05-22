@@ -450,7 +450,7 @@ export default {
 
       // Llamar al AI
       const freshLead = (await env.DB.prepare('SELECT * FROM leads WHERE id = ?').bind(leadId).first()) || {};
-      const doneStages = ['presupuesto_enviado','contrato_pendiente','cliente_confirmado','lead_perdido'];
+      const doneStages = ['datos_completos','presupuesto_enviado','contrato_pendiente','cliente_confirmado','lead_perdido'];
       if (doneStages.includes(freshLead.stage || '')) return json({ ok: true });
       const sysPrompt = buildSystemPrompt(freshLead);
       const aiMessages = [
