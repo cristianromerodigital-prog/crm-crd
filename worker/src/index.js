@@ -125,7 +125,8 @@ FORMATO DE RESPUESTA — Respondé ÚNICAMENTE con JSON válido:
 
 En "extracted" poné SOLO los valores que el cliente mencionó en ESTE mensaje (null si no los dijo).
 CRÍTICO: si el cliente menciona el tipo de evento (XV, boda, cumpleaños, etc.) en CUALQUIER parte del mensaje, extraelo en "event_type" SIEMPRE, incluso si es el primer mensaje.
-En "stage" SIEMPRE poné un valor: "consultando" mientras seguís recopilando datos, "datos_completos" ÚNICAMENTE cuando ya tenés ABSOLUTAMENTE TODOS los datos faltantes listados arriba y "event_type" está confirmado.`;
+CRÍTICO: si el cliente menciona una ciudad, localidad o barrio (ej: "en Ramos Mejía", "en CABA", "en zona norte") en cualquier parte del mensaje, extraelo en "city" SIEMPRE, aunque sea parte de la descripción del lugar.
+En "stage" SIEMPRE poné un valor: "consultando" mientras seguís recopilando datos, "datos_completos" cuando ya tenés confirmados event_type, event_year o event_date, venue, guests, schedule, service y decisión sobre pre_service. City no es bloqueante para avanzar a datos_completos.`;
 }
 
 function normalizeEventYear(s) {
