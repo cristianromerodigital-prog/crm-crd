@@ -400,22 +400,17 @@ export default {
         const fresh = await env.DB.prepare('SELECT wa_jid, event_type FROM leads WHERE id = ?').bind(leadId).first();
         const wJid = fresh?.wa_jid || lead.wa_jid || '';
         const eventType = fresh?.event_type || updates.event_type || '';
-        if (!eventType) {
-          await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
-            .bind('consultando', Date.now(), leadId).run();
-        } else {
-          const pdf = getPdfUrl(eventType);
-          const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
-          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId, 'out', followupText, 'Angela', Date.now()).run();
-          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId, 'out', MEETING_Q, 'Ángela', Date.now()).run();
-          await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
-            .bind('presupuesto_enviado', Date.now(), leadId).run();
-          if (wJid) ctx.waitUntil(pdf
-            ? (async () => { await sendWA(wJid, PDF_CAPTION, pdf.url, pdf.name); await sendWA(wJid, MEETING_Q); })()
-            : (async () => { await sendWA(wJid, followupText); await sendWA(wJid, MEETING_Q); })());
-        }
+        const pdf = getPdfUrl(eventType);
+        const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
+        await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+          .bind(leadId, 'out', followupText, 'Angela', Date.now()).run();
+        await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+          .bind(leadId, 'out', MEETING_Q, 'Ángela', Date.now()).run();
+        await env.DB.prepare('UPDATE leads SET stage = ?, updated_at = ? WHERE id = ?')
+          .bind('presupuesto_enviado', Date.now(), leadId).run();
+        if (wJid) ctx.waitUntil(pdf
+          ? (async () => { await sendWA(wJid, PDF_CAPTION, pdf.url, pdf.name); await sendWA(wJid, MEETING_Q); })()
+          : (async () => { await sendWA(wJid, followupText); await sendWA(wJid, MEETING_Q); })());
       }
 
       return json({ reply, extracted: updates, stage: newStage });
@@ -512,31 +507,22 @@ export default {
       if (newStage === 'datos_completos') {
         const fr = await env.DB.prepare('SELECT event_type FROM leads WHERE id=?').bind(leadId).first();
         const eventType = fr?.event_type || upd.event_type || '';
-        if (!eventType) {
-          // Sin event_type: revertir para que el bot siga preguntando
-          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
-            .bind('consultando', Date.now(), leadId).run();
-          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
-            .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
-          ctx.waitUntil(sendWA(waJid, reply));
-        } else {
-          const pdf = getPdfUrl(eventType);
-          const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
-          // ATÓMICO: presupuesto_enviado ANTES de enviar — bloquea cualquier mensaje concurrente
-          await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
-            .bind('presupuesto_enviado', Date.now(), leadId).run();
-          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
-            .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
-          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId,'out',followupText,'Angela',Date.now()).run();
-          await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
-            .bind(leadId,'out',MEETING_Q,'Ángela',Date.now()).run();
-          ctx.waitUntil((async () => {
-            await sendWA(waJid, reply);
-            await (pdf ? sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name) : sendWA(waJid, followupText));
-            await sendWA(waJid, MEETING_Q);
-          })());
-        }
+        const pdf = getPdfUrl(eventType);
+        const followupText = pdf ? `pdf:${pdf.viewUrl}|${pdf.name}|${PDF_CAPTION}` : 'En breve Cristian te hace llegar los valores para tu evento. Gracias por tu consulta!';
+        // ATÓMICO: presupuesto_enviado ANTES de enviar — bloquea cualquier mensaje concurrente
+        await env.DB.prepare('UPDATE leads SET stage=?,updated_at=? WHERE id=?')
+          .bind('presupuesto_enviado', Date.now(), leadId).run();
+        await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts,wa_msg_id) VALUES (?,?,?,?,?,?)')
+          .bind(leadId,'out',reply,'Ángela',Date.now(),waMessageId||null).run();
+        await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+          .bind(leadId,'out',followupText,'Angela',Date.now()).run();
+        await env.DB.prepare('INSERT INTO messages (lead_id,direction,text,author,ts) VALUES (?,?,?,?,?)')
+          .bind(leadId,'out',MEETING_Q,'Ángela',Date.now()).run();
+        ctx.waitUntil((async () => {
+          await sendWA(waJid, reply);
+          await (pdf ? sendWA(waJid, PDF_CAPTION, pdf.url, pdf.name) : sendWA(waJid, followupText));
+          await sendWA(waJid, MEETING_Q);
+        })());
         return json({ ok: true, reply });
       }
 
